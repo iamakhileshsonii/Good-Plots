@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { likedFeedsApi } from "../../services/api";
 import LikedCard from "./components/LikedCard";
 import likeImg from "../../assets/images/like.svg";
-import useGetLikedFeeds from "../../hooks/useGetLikedFeeds";
+import useGetLikedFeeds from "../../services/useGetLikedFeeds";
 
 const Liked = () => {
   const { loading, likedFeeds } = useGetLikedFeeds();

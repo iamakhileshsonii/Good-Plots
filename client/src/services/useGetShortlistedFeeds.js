@@ -19,19 +19,23 @@ const useGetShortlistedFeeds = () => {
           }
         );
 
-        if (res.status === 200) {
+        if (res.status === 200 && Array.isArray(res.data?.data)) {
           setShortlistedFeeds(res.data.data);
-          setLoading(false);
         } else {
-          return null;
+          console.error("Unexpected response format:", res.data);
+          setShortlistedFeeds([]); // Fallback to empty array
         }
       } catch (error) {
-        console.log(
-          "Something went wrong while fetching shortlisted feeds",
+        console.error(
+          "Something went wrong while fetching shortlisted feeds:",
           error
         );
+        setShortlistedFeeds([]); // Fallback to empty array
+      } finally {
+        setLoading(false);
       }
     };
+
     fetchShortlistedFeeds();
   }, [authToken]);
 

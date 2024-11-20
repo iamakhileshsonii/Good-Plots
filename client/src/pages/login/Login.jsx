@@ -1,6 +1,6 @@
 // src/components/Login.js
 import React, { useContext, useState } from "react";
-import { loginUserAPI } from "../../services/api";
+import { loginUser } from "../../services/authApi";
 import { Link, useNavigate } from "react-router-dom";
 import { authContext } from "../../context/authContext";
 import toast from "react-hot-toast";
@@ -14,7 +14,7 @@ const Login = () => {
   // Handle form submit
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const response = await loginUserAPI({ email, password }); //Fetch data from login API
+    const response = await loginUser({ email, password }); //Fetch data from login API
     if (response.status === 200) {
       await login(response.data.data.accessToken);
       toast.success("Login successfull");

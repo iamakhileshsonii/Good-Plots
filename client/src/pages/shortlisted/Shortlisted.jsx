@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import ShortlistedCard from "./components/ShortlistedCard";
 import { shortlistedFeedsApi } from "../../services/api";
 import shortlistImg from "../../assets/images/shortlist.svg";
-import useGetShortlistedFeeds from "../../hooks/useGetShortlistedFeeds";
+import useGetShortlistedFeeds from "../../services/useGetShortlistedFeeds";
 
 const Shortlisted = () => {
   const { shortlistedFeeds, loading } = useGetShortlistedFeeds();
@@ -17,7 +17,7 @@ const Shortlisted = () => {
       </h4>
 
       <div className="flex flex-row gap-4 justify-start">
-        {shortlistedFeeds.length === 0 ? (
+        {shortlistedFeeds.length === 0 || shortlistedFeeds.length < 1 ? (
           <div
             className="personalized-content flex flex-col justify-center p-10 rounded-md w-full"
             style={{ boxShadow: "0px 0px 10px rgb(223, 223, 223)" }}

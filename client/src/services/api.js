@@ -1,7 +1,8 @@
 import axios from "axios";
 
-const API_URL = "http://localhost:3001/api/v1";
-const authToken = localStorage.getItem("goodplotsAuthToken");
+export const API_URL = "http://localhost:3001/api/v1";
+export const authToken = localStorage.getItem("goodplotsAuthToken");
+export const AUTH_TOKEN = localStorage.getItem("goodplotsAuthToken");
 
 //REFRESH ACCESS TOKEN
 const refreshAccessToken = async () => {
@@ -74,81 +75,6 @@ apiClient.interceptors.response.use(
   }
 );
 
-// // LOGIN API
-const loginUserAPI = async ({ email, password }) => {
-  // Send a POST request
-  try {
-    const response = await axios.post(`${API_URL}/user/login`, {
-      email,
-      password,
-    });
-    if (!response) {
-      console.error("Something went wrong while logging the user", response);
-    }
-    // if (response.data.statusCode === 200) {
-    //   console.log("User logged in successfully");
-    // }
-
-    console.log("LOGIN RESPONSE: ", response);
-    console.log("LOGIN ACCESS TOKEN: ", response.data.data.accessToken);
-    localStorage.setItem("goodplotsAuthToken", response.data.data.accessToken);
-
-    return response;
-  } catch (error) {
-    console.log("Something went wrong with Login api!!!");
-    return null;
-  }
-};
-
-// const loginUserAPI = async ({ email, password }) => {
-//   try {
-//     const response = await axios.post(`${API_URL}/user/login`, {
-//       email,
-//       password,
-//     });
-
-//     // Return the complete response to handle status codes
-//     return response;
-//   } catch (error) {
-//     if (error.response) {
-//       // Return the error response object so the status can be handled
-//       return error.response;
-//     } else {
-//       console.error("Unexpected error during login API call:", error);
-//       return { status: 500, data: { message: "Internal Server Error" } }; // Fallback for unexpected errors
-//     }
-//   }
-// };
-
-// REGISTER API
-const registerUserAPI = async (userData) => {
-  try {
-    const response = await axios.post(`${API_URL}/user/register`, userData, {
-      headers: {
-        "Content-Type": "multipart/form-data",
-      },
-    });
-    return response.data;
-  } catch (error) {
-    if (error.response) {
-      const statusCode = error.response.status;
-      if (statusCode === 409) {
-        window.alert("User already exists");
-        console.error("Error 409: User already exists");
-        return { error: "User already exists" };
-      } else {
-        const errorMessage =
-          error.response.data.message || error.response.statusText;
-        console.error(`Error ${statusCode}: ${errorMessage}`);
-      }
-    } else if (error.request) {
-      console.error("No response received from the server:", error.request);
-    } else {
-      console.error("Error in setting up the request:", error.message);
-    }
-    return null;
-  }
-};
 //UPDATE AVATAR
 const updateAvatarAPI = async (formData) => {
   try {

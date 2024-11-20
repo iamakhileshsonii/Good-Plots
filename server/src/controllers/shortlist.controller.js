@@ -67,8 +67,6 @@ const shortlistFeed = asyncHandler(async (req, res) => {
 
 // SHORTLISTED FEEDS
 const shortlistedFeeds = asyncHandler(async (req, res) => {
-  console.log("User ID:", req.user?._id); // Debugging
-
   const userId = req.user?._id;
   if (!userId) {
     throw new ApiError(401, "User ID could not be found");

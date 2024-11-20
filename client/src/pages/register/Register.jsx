@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { registerUserAPI } from "../../services/api";
+import { registerUser } from "../../services/authApi";
 import { Link, useNavigate } from "react-router-dom";
 import defaultAvatar from "../../assets/images/userAvatar.png";
 import useRegisterUser from "../../services/useRegisterUser";
@@ -46,6 +46,7 @@ const Register = () => {
     userData.append("phone", phone);
     userData.append("role", role);
 
+    // const register = await registerUser(userData);
     const register = await registerUser(userData);
     if (register) {
       navigate("/login");
