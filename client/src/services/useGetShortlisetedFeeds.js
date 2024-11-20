@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { shortlistedFeedsApi } from "../services/api";
+import { shortlistedFeedsApi } from "./api";
 
 const useGetShortlisetedFeeds = () => {
   const [shortlistedFeeds, setShortlistedFeeds] = useState([]);

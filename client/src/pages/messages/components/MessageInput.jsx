@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import useSendMessage from "../../../hooks/useSendMessage";
+import useSendMessage from "../../../services/useSendMessage";
 import useConversation from "../../../zustand/useConversation";
 
 const MessageInput = ({ selectedUser, senderId }) => {

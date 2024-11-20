@@ -1,7 +1,7 @@
 import React, { useEffect, useRef } from "react";
 import Message from "./Message.jsx";
-import useGetMessages from "../../../hooks/useGetMessages.js";
-import useListenMessages from "../../../hooks/useListenMessage.js";
+import useGetMessages from "../../../services/useGetMessages.js";
+import useListenMessages from "../../../services/useListenMessage.js";
 
 const MessagesContainer = () => {
   const { messages, loading } = useGetMessages();

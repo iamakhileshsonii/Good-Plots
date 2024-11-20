@@ -3,7 +3,7 @@ import defaultAvatar from "../../assets/images/userAvatar.png";
 import Users from "./components/Users";
 import MessagesContainer from "./components/MessagesContainer";
 import chatImg from "../../assets/images/chat.svg";
-import useGetConversations from "../../hooks/useGetConversation";
+import useGetConversations from "../../services/useGetConversation";
 import MessageInput from "./components/MessageInput";
 import useConversation from "../../zustand/useConversation";
 import { authContext } from "../../context/authContext";

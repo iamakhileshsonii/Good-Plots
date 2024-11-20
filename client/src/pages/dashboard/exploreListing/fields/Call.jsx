@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import usePropertyData from "../../../../hooks/usePropertyData";
+import usePropertyData from "../../../../services/usePropertyData";
 
 const Call = ({ feedId }) => {
   const { property } = usePropertyData(feedId);

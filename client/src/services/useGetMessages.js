@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
-import { getMessagesApi } from "../services/api";
+import { getMessagesApi } from "./api";
 import axios from "axios";
-import useGetConversations from "./useGetConversation";
+import useGetConversations from "../services/useGetConversation";
 import useConversation from "../zustand/useConversation";
 
 const useGetMessages = () => {

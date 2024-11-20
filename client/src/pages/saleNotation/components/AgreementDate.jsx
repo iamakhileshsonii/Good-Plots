@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import useSendSaleNotationMessage from "../../../hooks/useSendSaleNotationMessage";
+import useSendSaleNotationMessage from "../../../services/useSendSaleNotationMessage";
 
 const AgreementDate = ({ messages, conversation }) => {
   const [date, setDate] = useState(""); // Initialize date with an empty string

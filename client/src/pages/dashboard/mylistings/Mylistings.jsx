@@ -1,6 +1,6 @@
 import React from "react";
 import SingleListingCard from "./components/SingleListingCard";
-import useMyListings from "../../../hooks/useMyListings";
+import useMyListings from "../../../services/useMyListings";
 
 const MyListings = () => {
   const { myListings, loading, error } = useMyListings(); // Use the hook

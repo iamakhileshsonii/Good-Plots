@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { registerUserAPI } from "../../services/api";
 import { Link, useNavigate } from "react-router-dom";
 import defaultAvatar from "../../assets/images/userAvatar.png";
-import useRegisterUser from "../../hooks/useRegisterUser";
+import useRegisterUser from "../../services/useRegisterUser";
 import toast from "react-hot-toast";
 
 const Register = () => {

@@ -5,7 +5,7 @@ import Amenities from "./fields/Amenities";
 import Sidebar from "./fields/Sidebar";
 import TopFacilities from "./fields/TopFacilities";
 import Proximity from "./fields/Proximity";
-import useGetPropertyData from "../../../hooks/useGetPropertyData";
+import useGetPropertyData from "../../../services/useGetPropertyData";
 
 const SingleProperty = () => {
   const params = useParams(); // Correctly extract propertyId

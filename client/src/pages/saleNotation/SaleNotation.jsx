@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import Conversation from "./components/Conversation";
 import MessageContainer from "./components/MessageContainer";
-import useGetSaleNotationCovnersationUsers from "../../hooks/useGetSaleNotationCovnersationUsers";
+import useGetSaleNotationCovnersationUsers from "../../services/useGetSaleNotationCovnersationUsers";
 import useSaleNotationConversation from "../../zustand/useSaleNotationConversation";
 
 const SaleNotation = () => {

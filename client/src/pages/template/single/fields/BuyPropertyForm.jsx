@@ -1,5 +1,5 @@
 import React, { useContext, useState } from "react";
-import useSendSaleNotationMessage from "../../../../hooks/useSendSaleNotationMessage";
+import useSendSaleNotationMessage from "../../../../services/useSendSaleNotationMessage";
 import { authContext } from "../../../../context/authContext";
 import { useNavigate } from "react-router-dom";
 

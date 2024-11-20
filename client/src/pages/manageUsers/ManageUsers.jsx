@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import useGetAllUsers from "../../hooks/useGetAllUsers";
+import useGetAllUsers from "../../services/useGetAllUsers";
 import SingleUserData from "./SingleUserData";
 
 const ManageUsers = () => {

@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from "react";
-import useAssignNewPincode from "../../hooks/useAssignNewPincode";
-import useGetLawyerAssignedPins from "../../hooks/useGetLawyerAssignedPins";
-import useAssignBrokerPincode from "../../hooks/useAssignBrokerPincode";
-import useAssignLawyerPincode from "../../hooks/useAssignLawyerPincode";
+import useAssignNewPincode from "../../services/useAssignNewPincode";
+import useGetLawyerAssignedPins from "../../services/useGetLawyerAssignedPins";
+import useAssignBrokerPincode from "../../services/useAssignBrokerPincode";
+import useAssignLawyerPincode from "../../services/useAssignLawyerPincode";
 import toast from "react-hot-toast";
 
 const LawyerLocationSelector = ({ user, setIsModalOpen }) => {

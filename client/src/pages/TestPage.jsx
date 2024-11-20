@@ -8,7 +8,7 @@ import {
   Button,
 } from "@material-tailwind/react";
 import LocationSelector from "./LocationSelector";
-import useAssignedPincodes from "../hooks/useAssignedPincodes";
+import useAssignedPincodes from "../services/useAssignedPincodes";
 import axios from "axios";
 
 const TestPage = () => {

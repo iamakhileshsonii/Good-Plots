@@ -1,7 +1,7 @@
 import React, { useContext, useState } from "react";
-
 import { useNavigate, Link } from "react-router-dom";
 import { authContext } from "../../../context/authContext";
+import toast from "react-hot-toast";
 
 const Sidebar = () => {
   const navigate = useNavigate();
@@ -13,6 +13,7 @@ const Sidebar = () => {
   const handleLogout = () => {
     logout();
     navigate("/login");
+    toast.success("Logout Successfull ");
   };
 
   const handleActivityToggle = () => {

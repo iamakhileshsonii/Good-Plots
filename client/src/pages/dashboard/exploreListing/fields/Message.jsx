@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { initFlowbite } from "flowbite";
 import { sendMessageApi } from "../../../../services/api";
-import usePropertyData from "../../../../hooks/usePropertyData";
+import usePropertyData from "../../../../services/usePropertyData";
 import toast from "react-hot-toast";
 
 const Message = ({ feedId }) => {

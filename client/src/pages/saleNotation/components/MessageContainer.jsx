@@ -2,16 +2,16 @@ import React, { useContext, useEffect, useState } from "react";
 import Message from "./Message";
 import defaultAvatar from "../../../assets/images/userAvatar.png";
 import OfferForm from "./OfferForm";
-import useGetSaleNotationMessage from "../../../hooks/useGetSaleNotationMessage";
+import useGetSaleNotationMessage from "../../../services/useGetSaleNotationMessage";
 import { authContext } from "../../../context/authContext";
 import { initFlowbite } from "flowbite";
 import ChatMembers from "./ChatMembers";
-import useAcceptSaleNotationOffer from "../../../hooks/useAcceptSaleNotationOffer";
+import useAcceptSaleNotationOffer from "../../../services/useAcceptSaleNotationOffer";
 import AgreementDate from "./AgreementDate";
 import UploadAgreementDoc from "./UploadAgreementDoc";
 import LawyerDocuments from "./LawyerDocuments";
 import useSaleNotationConversation from "../../../zustand/useSaleNotationConversation";
-import useListenSaleNotationMessage from "../../../hooks/useListenSaleNotationMessage";
+import useListenSaleNotationMessage from "../../../services/useListenSaleNotationMessage";
 
 const MessageContainer = () => {
   useEffect(() => {

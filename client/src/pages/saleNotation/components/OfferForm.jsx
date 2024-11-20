@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import useSendSaleNotationMessage from "../../../hooks/useSendSaleNotationMessage";
+import useSendSaleNotationMessage from "../../../services/useSendSaleNotationMessage";
 
 const OfferForm = ({ conversation, setOfferFormVisibility, setOfferForm }) => {
   // Get counter form details

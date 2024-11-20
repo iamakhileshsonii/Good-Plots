@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import useSendSaleNotationMessage from "../../../hooks/useSendSaleNotationMessage";
+import useSendSaleNotationMessage from "../../../services/useSendSaleNotationMessage";
 import axios from "axios";
 
 const LawyerDocuments = ({ conversation }) => {

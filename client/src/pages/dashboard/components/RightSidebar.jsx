@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { shortlistedFeedsApi, shortlistFeedApi } from "../../../services/api";
 import defaultProperty from "../../../assets/images/property.jpg";
-import useGetShortlisetedFeeds from "../../../hooks/useGetShortlisetedFeeds";
+import useGetShortlisetedFeeds from "../../../services/useGetShortlisetedFeeds";
 
 const RightSidebar = () => {
   const [likedFeeds, setLikedFeeds] = useState([]);

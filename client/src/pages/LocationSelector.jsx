@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from "react";
-import useAssignNewPincode from "../hooks/useAssignNewPincode";
-import useAssignedPincodes from "../hooks/useAssignedPincodes";
-import useGetBrokerAssignedPins from "../hooks/useGetBrokerAssignedPins";
-import useGetLawyerAssignedPins from "../hooks/useGetLawyerAssignedPins";
-import useAssignBrokerPincode from "../hooks/useAssignBrokerPincode";
-import useAssignLawyerPincode from "../hooks/useAssignLawyerPincode";
+import useAssignNewPincode from "../services/useAssignNewPincode";
+import useAssignedPincodes from "../services/useAssignedPincodes";
+import useGetBrokerAssignedPins from "../services/useGetBrokerAssignedPins";
+import useGetLawyerAssignedPins from "../services/useGetLawyerAssignedPins";
+import useAssignBrokerPincode from "../services/useAssignBrokerPincode";
+import useAssignLawyerPincode from "../services/useAssignLawyerPincode";
 
 const LocationSelector = ({ user }) => {
   const [countries, setCountries] = useState([]);

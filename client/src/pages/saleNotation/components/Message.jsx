@@ -1,6 +1,6 @@
 import React, { useContext, useEffect, useState } from "react";
 import defaultAvatar from "../../../assets/images/userAvatar.png";
-import useSendSaleNotationMessage from "../../../hooks/useSendSaleNotationMessage";
+import useSendSaleNotationMessage from "../../../services/useSendSaleNotationMessage";
 import { authContext } from "../../../context/authContext";
 import OfferForm from "./OfferForm";
 import useFormattedDateTime from "../../../hooks/useFormattedDateTime";
