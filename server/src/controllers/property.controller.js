@@ -76,4 +76,38 @@ const getProperty = asyncHandler(async (req, res) => {
     .json(new ApiResponse(200, property, "Property data fetched successfully"));
 });
 
-export { getCurrentPropertyData, getProperty };
+const getAllVerifiedProperties = asyncHandler(async (req, res) => {
+  const properties = await InitialForm.find({
+    kyc: "completed",
+  });
+
+  if (!properties) {
+    return res
+      .status(200)
+      .json(new ApiResponse(200, {}, "No properties found"));
+  }
+  return res
+    .status(200)
+    .json(new ApiResponse(200, properties, "Properties Fetched Successfully"));
+});
+const getAllPendingProperties = asyncHandler(async (req, res) => {
+  const properties = await InitialForm.find({
+    kyc: "pending",
+  });
+
+  if (!properties) {
+    return res
+      .status(200)
+      .json(new ApiResponse(200, {}, "No properties found"));
+  }
+  return res
+    .status(200)
+    .json(new ApiResponse(200, properties, "Properties Fetched Successfully"));
+});
+
+export {
+  getCurrentPropertyData,
+  getProperty,
+  getAllVerifiedProperties,
+  getAllPendingProperties,
+};

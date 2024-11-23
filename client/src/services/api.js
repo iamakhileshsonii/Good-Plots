@@ -586,8 +586,6 @@ const getConversationsApi = async () => {
 };
 
 export {
-  loginUserAPI,
-  registerUserAPI,
   currentUserProfileAPI,
   userLogoutAPI,
   submitInitialForm,

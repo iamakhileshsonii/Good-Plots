@@ -72,7 +72,7 @@ const shortlistedFeeds = asyncHandler(async (req, res) => {
     throw new ApiError(401, "User ID could not be found");
   }
 
-  const shortlistedFeedsData = await Shortlist.aggregate([
+  const feeds = await Shortlist.aggregate([
     {
       $match: {
         shortlistedBy: new mongoose.Types.ObjectId(userId),
@@ -80,39 +80,26 @@ const shortlistedFeeds = asyncHandler(async (req, res) => {
     },
     {
       $lookup: {
-        from: "initialforms", // The collection name of InitialFormData
+        from: "initialforms",
         localField: "listingId",
         foreignField: "_id",
-        as: "feedData",
-        pipeline: [
-          {
-            $lookup: {
-              from: "kyclistings",
-              localField: "_id",
-              foreignField: "forProperty",
-              as: "kycData",
-            },
-          },
-        ],
+        as: "feed",
       },
     },
   ]);
 
-  if (!shortlistedFeedsData || shortlistedFeedsData.length === 0) {
-    res
+  // Check if feeds is empty
+  if (feeds.length === 0) {
+    return res
+      .status(204)
+      .json(new ApiResponse(204, {}, "No shortlisted feeds"));
+  } else {
+    return res
       .status(200)
-      .json(new ApiResponse(200, {}, "No shortlisted feeds available"));
+      .json(
+        new ApiResponse(200, feeds, "Shortlisted feeds fetched successfully")
+      );
   }
-
-  return res
-    .status(200)
-    .json(
-      new ApiResponse(
-        200,
-        shortlistedFeedsData,
-        "Shortlisted feeds fetched successfully"
-      )
-    );
 });
 
 export { shortlistFeed, shortlistedFeeds };

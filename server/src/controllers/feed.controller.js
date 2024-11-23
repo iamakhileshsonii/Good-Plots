@@ -56,10 +56,15 @@ const exploreFeed = asyncHandler(async (req, res) => {
 // LIKE FEED
 const likeFeed = asyncHandler(async (req, res) => {
   const { feedId } = req.params;
+
   const userId = req?.user?._id; // Assuming you have user authentication and user ID is available in req.user
 
   if (!feedId) {
     throw new ApiError(401, "FeedId not received");
+  }
+
+  if (!userId) {
+    throw new ApiError(401, "Unauthorized User");
   }
 
   // Check if the feed (listing) exists
@@ -100,14 +105,40 @@ const likeFeed = asyncHandler(async (req, res) => {
 // LIKED FEEDS
 const likedFeeds = asyncHandler(async (req, res) => {
   const userId = req?.user?._id; // Assuming you have user authentication and user ID
-  console.log("LIKE FEED STATUS FEED ID: ", userId);
+
   if (!userId) {
-    throw new ApiError(401, "Unauthorized request");
+    throw new ApiError(401, "Unauthorized request made");
   }
 
-  const likedData = await Like.find({
-    likedBy: new mongoose.Types.ObjectId(userId),
-  });
+  // const likedData = await Like.find({
+  //   likedBy: new mongoose.Types.ObjectId(userId),
+  // });
+
+  const likedData = await Like.aggregate([
+    {
+      $match: {
+        likedBy: new mongoose.Types.ObjectId(userId),
+      },
+    },
+    {
+      $lookup: {
+        from: "initialforms",
+        localField: "listingId",
+        foreignField: "_id",
+        as: "feed",
+        pipeline: [
+          {
+            $lookup: {
+              from: "kyclistings",
+              localField: "_id",
+              foreignField: "forProperty",
+              as: "property",
+            },
+          },
+        ],
+      },
+    },
+  ]);
 
   if (!likedData) {
     res.status(200).json(new ApiResponse(200, {}, "No liked feeds"));
