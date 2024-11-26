@@ -105,9 +105,71 @@ const getAllPendingProperties = asyncHandler(async (req, res) => {
     .json(new ApiResponse(200, properties, "Properties Fetched Successfully"));
 });
 
+//Filter Property
+const getFilteredProperty = asyncHandler(async (req, res) => {
+  const {
+    facing,
+    propertySubtype,
+    reservedParking,
+    coveredParking,
+    openParking,
+    whetherInCooperativeSociety,
+    whetherInGatedComplex,
+    isThisCornerHouse,
+    saleType,
+  } = req.query;
+
+  try {
+    const matchConditions = {};
+
+    // Add filters to the match condition dynamically
+    if (facing) matchConditions["kycDetails.area.facing"] = facing;
+    if (propertySubtype) matchConditions["propertySubtype"] = propertySubtype;
+    if (reservedParking)
+      matchConditions["kycDetails.reservedParking"] = reservedParking;
+    if (coveredParking)
+      matchConditions["kycDetails.coveredParking"] = coveredParking;
+    if (openParking) matchConditions["kycDetails.openParking"] = openParking;
+    if (whetherInCooperativeSociety)
+      matchConditions["kycDetails.whetherInCooperativeSociety"] =
+        whetherInCooperativeSociety;
+    if (whetherInGatedComplex)
+      matchConditions["kycDetails.whetherInGatedComplex"] =
+        whetherInGatedComplex;
+    if (isThisCornerHouse)
+      matchConditions["kycDetails.isThisCornerHouse"] = isThisCornerHouse;
+    if (saleType) matchConditions["saleType"] = saleType;
+
+    const properties = await InitialForm.aggregate([
+      {
+        $lookup: {
+          from: "kyclistings", // MongoDB collection for kycListing
+          localField: "_id",
+          foreignField: "forProperty",
+          as: "kycDetails",
+        },
+      },
+      {
+        $unwind: {
+          path: "$kycDetails",
+          preserveNullAndEmptyArrays: true, // In case some properties don't have KYC details
+        },
+      },
+      {
+        $match: matchConditions, // Apply dynamic filters
+      },
+    ]);
+
+    res.status(200).json({ data: properties });
+  } catch (error) {
+    res.status(400).json({ message: error.message });
+  }
+});
+
 export {
   getCurrentPropertyData,
   getProperty,
   getAllVerifiedProperties,
   getAllPendingProperties,
+  getFilteredProperty,
 };

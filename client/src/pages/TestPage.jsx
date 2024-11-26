@@ -5,6 +5,7 @@ import {
 } from "../services/propertyApi"; // Assuming this API call fetches the properties
 import PropertyCard from "../components/ui/PropertyCard"; // Assuming the card component
 import SearchBar from "../components/ui/SearchBar";
+import Filter from "../components/ui/Filter";
 
 const TestPage = () => {
   // Loading states for verified and pending properties
@@ -16,7 +17,7 @@ const TestPage = () => {
   const [pendingProperties, setPendingProperties] = useState([]);
 
   //Search Property
-  const [searchTerm, setSearchTerm] = useState();
+  const [searchTerm, setSearchTerm] = useState("");
 
   // Error state to manage errors
   const [error, setError] = useState("");
@@ -142,7 +143,7 @@ const TestPage = () => {
           <div className="flex justify-center flex-wrap px-20 ">
             {pendingProperties
               .filter((property) => {
-                return searchTerm.toLowerCase() === ""
+                return searchTerm?.toLowerCase() === ""
                   ? property
                   : property?.title?.toLowerCase().includes(searchTerm);
               })
@@ -169,6 +170,10 @@ const TestPage = () => {
           <p className="text-red-500">{error}</p>
         </div>
       )}
+
+      <div className="flex items-center justify-center my-20 w-full">
+        <Filter />
+      </div>
     </div>
   );
 };

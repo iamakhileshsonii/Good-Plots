@@ -33,6 +33,9 @@ module.exports = {
       });
     },
     require("daisyui"),
+    require("flowbite/plugin")({
+      charts: true,
+    }),
   ],
   daisyui: {
     themes: false, // Only use your custom colors and styles

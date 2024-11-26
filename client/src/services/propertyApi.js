@@ -61,3 +61,17 @@ export const getPendingProperties = async () => {
     );
   }
 };
+
+const filterProperties = async (filters) => {
+  try {
+    // Construct query string from filters
+    const queryString = new URLSearchParams(filters).toString();
+
+    // Make the API call
+    const response = await axios.get(`/api/properties/filter?${queryString}`);
+
+    return response.data.data; // Return the filtered properties
+  } catch (error) {
+    console.log("Something went wrong while filtering the properties");
+  }
+};
