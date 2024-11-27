@@ -5,32 +5,7 @@ import axios from "axios";
 const API_URL = "http://localhost:3001/api/v1";
 const authToken = localStorage.getItem("goodplotsAuthToken");
 
-// export const getPropertyData = async (propertyId) => {
-//   const [property, setProperty] = useState(null); // Initialized with null for better clarity
-//   const [loading, setLoading] = useState(false);
-//   const [error, setError] = useState(null); // Initialized with null for better clarity
-
-//   try {
-//     setLoading(true);
-//     const response = await axios.get(
-//       `http://localhost:3001/api/v1/property/${propertyId}`
-//     );
-
-//     if (response.status === 200) {
-//       setProperty(response.data.data[0]);
-//     } else {
-//       throw new Error("Property not found");
-//     }
-//   } catch (error) {
-//     setError(error);
-//   } finally {
-//     setLoading(false);
-//   }
-
-//   return { property, loading, error };
-// };
-
-export const getVerifiedProperties = async () => {
+const getVerifiedProperties = async () => {
   try {
     const response = await axios.get(`${API_URL}/property/verified-properties`);
 
@@ -45,7 +20,7 @@ export const getVerifiedProperties = async () => {
   }
 };
 
-export const getPendingProperties = async () => {
+const getPendingProperties = async () => {
   try {
     const response = await axios.get(`${API_URL}/property/pending-properties`);
 
@@ -64,14 +39,28 @@ export const getPendingProperties = async () => {
 
 const filterProperties = async (filters) => {
   try {
-    // Construct query string from filters
-    const queryString = new URLSearchParams(filters).toString();
+    // Remove filters with empty or default values
+    const cleanedFilters = Object.fromEntries(
+      Object.entries(filters).filter(([key, value]) => {
+        if (Array.isArray(value)) {
+          return value.length > 0; // Include if the array has values
+        }
+        return value !== ""; // Include if the value is not an empty string
+      })
+    );
+
+    // Construct query string from cleaned filters
+    const queryString = new URLSearchParams(cleanedFilters).toString();
 
     // Make the API call
-    const response = await axios.get(`/api/properties/filter?${queryString}`);
+    const response = await axios.get(
+      `${API_URL}/property/filter?${queryString}`
+    );
 
     return response.data.data; // Return the filtered properties
   } catch (error) {
-    console.log("Something went wrong while filtering the properties");
+    console.error("Something went wrong while filtering the properties", error);
   }
 };
+
+export { getVerifiedProperties, getPendingProperties, filterProperties };

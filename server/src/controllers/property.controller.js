@@ -119,6 +119,8 @@ const getFilteredProperty = asyncHandler(async (req, res) => {
     saleType,
   } = req.query;
 
+  console.log("REQ QUERY STRING: ", req.query);
+
   try {
     const matchConditions = {};
 
