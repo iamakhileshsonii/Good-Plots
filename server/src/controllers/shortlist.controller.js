@@ -8,9 +8,6 @@ import { asyncHandler } from "../utils/asyncHandler.js";
 const shortlistFeed = asyncHandler(async (req, res) => {
   const { feedId } = req.params;
 
-  console.log("Feed ID:", feedId); // Debugging
-  console.log("User ID:", req.user?._id); // Debugging
-
   if (!feedId) {
     throw new ApiError(401, "FeedId could not be found");
   }
@@ -65,7 +62,6 @@ const shortlistFeed = asyncHandler(async (req, res) => {
     );
 });
 
-// SHORTLISTED FEEDS
 const shortlistedFeeds = asyncHandler(async (req, res) => {
   const userId = req.user?._id;
   if (!userId) {
@@ -73,17 +69,61 @@ const shortlistedFeeds = asyncHandler(async (req, res) => {
   }
 
   const feeds = await Shortlist.aggregate([
+    // Match shortlisted feeds for the logged-in user
     {
       $match: {
         shortlistedBy: new mongoose.Types.ObjectId(userId),
       },
     },
+    // Lookup user details for `shortlistedBy`
+    {
+      $lookup: {
+        from: "users",
+        localField: "shortlistedBy",
+        foreignField: "_id",
+        as: "user",
+      },
+    },
+    {
+      $unwind: {
+        path: "$user", // Flatten the array
+        preserveNullAndEmptyArrays: true,
+      },
+    },
+    // Lookup property details for `listingId`
     {
       $lookup: {
         from: "initialforms",
         localField: "listingId",
         foreignField: "_id",
-        as: "feed",
+        as: "property",
+        pipeline: [
+          // Only include specific fields in property details
+          {
+            $project: {
+              title: 1,
+              description: 1,
+              saleType: 1,
+              propertySubtype: 1,
+              totalArea: 1,
+              expectedPrice: 1,
+            },
+          },
+        ],
+      },
+    },
+    {
+      $unwind: {
+        path: "$property", // Flatten the array
+        preserveNullAndEmptyArrays: true,
+      },
+    },
+    // Project the selected fields
+    {
+      $project: {
+        _id: 1,
+        user: 1, // Only include user's name
+        property: 1, // Only include user's email
       },
     },
   ]);
@@ -93,13 +133,13 @@ const shortlistedFeeds = asyncHandler(async (req, res) => {
     return res
       .status(204)
       .json(new ApiResponse(204, {}, "No shortlisted feeds"));
-  } else {
-    return res
-      .status(200)
-      .json(
-        new ApiResponse(200, feeds, "Shortlisted feeds fetched successfully")
-      );
   }
+
+  return res
+    .status(200)
+    .json(
+      new ApiResponse(200, feeds, "Shortlisted feeds fetched successfully")
+    );
 });
 
 export { shortlistFeed, shortlistedFeeds };

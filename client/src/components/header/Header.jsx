@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext, useEffect, useRef, useState } from "react";
 import logo from "../../assets/logo/Logo.png";
 import defaultAvatar from "../../assets/images/userAvatar.png";
 import { Link, useNavigate } from "react-router-dom";
@@ -13,19 +13,38 @@ const Header = () => {
 
   const navigate = useNavigate();
   const { authUser, logout, isLogged, authRole } = useContext(authContext);
-  const [dropdownVisible, setDropdownVisible] = useState(false);
 
-  // Toggle the dropdown
-  const toggleDropdown = () => {
-    setDropdownVisible(!dropdownVisible);
-  };
+  // State to toggle dropdown
+  const [isDropdownOpen, setDropdownOpen] = useState(false);
+
+  // Ref for dropdown container
+  const dropdownRef = useRef(null);
 
   // Logout User
   const handleLogout = () => {
     logout();
     navigate("/login");
-    toast.success("Logout Successfull");
+    toast.success("Logout Successful");
   };
+
+  // Handle dropdown toggle
+  const toggleDropdown = () => {
+    setDropdownOpen(!isDropdownOpen);
+  };
+
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    const handleOutsideClick = (event) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setDropdownOpen(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleOutsideClick);
+    return () => {
+      document.removeEventListener("mousedown", handleOutsideClick);
+    };
+  }, []);
 
   return (
     <nav className="bg-white border-gray-200 dark:bg-gray-900 border border-b-2">
@@ -39,13 +58,13 @@ const Header = () => {
 
         <div className="relative block items-center md:order-2 space-x-3 md:space-x-0 rtl:space-x-reverse">
           {isLogged ? (
-            <div>
+            <div ref={dropdownRef} className="relative">
               <button
                 type="button"
+                onClick={toggleDropdown}
                 className="flex text-sm bg-gray-800 rounded-full md:me-0 focus:ring-4 focus:ring-gray-300 dark:focus:ring-gray-600"
                 id="user-menu-button"
-                aria-expanded={dropdownVisible}
-                onClick={toggleDropdown}
+                aria-expanded={isDropdownOpen}
               >
                 <img
                   className="w-8 h-8 rounded-full object-cover"
@@ -54,9 +73,9 @@ const Header = () => {
                 />
               </button>
 
-              {dropdownVisible && (
+              {isDropdownOpen && (
                 <div
-                  className="absolute right-0 z-50 my-4 text-base list-none bg-white divide-y divide-gray-100 rounded-lg shadow dark:bg-gray-700 dark:divide-gray-600"
+                  className="absolute right-0 z-50 mt-2 w-48 text-base list-none bg-white divide-y divide-gray-100 rounded-lg shadow dark:bg-gray-700 dark:divide-gray-600"
                   id="user-dropdown"
                 >
                   <div className="px-4 py-3">
@@ -68,7 +87,7 @@ const Header = () => {
                     </span>
                   </div>
                   <ul className="py-2" aria-labelledby="user-menu-button">
-                    <li onClick={toggleDropdown}>
+                    <li>
                       <Link
                         to="/dashboard"
                         className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white"
@@ -76,7 +95,7 @@ const Header = () => {
                         Dashboard
                       </Link>
                     </li>
-                    <li onClick={toggleDropdown}>
+                    <li>
                       <a
                         href="#"
                         className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white"
@@ -84,10 +103,13 @@ const Header = () => {
                         Settings
                       </a>
                     </li>
-                    <li onClick={handleLogout}>
-                      <a className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white">
+                    <li>
+                      <button
+                        onClick={handleLogout}
+                        className="w-full text-left block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white"
+                      >
                         Sign out
-                      </a>
+                      </button>
                     </li>
                   </ul>
                 </div>
@@ -122,6 +144,7 @@ const Header = () => {
             </svg>
           </button>
         </div>
+
         <div
           className="items-center justify-between hidden w-full md:flex md:w-auto md:order-1"
           id="navbar-user"

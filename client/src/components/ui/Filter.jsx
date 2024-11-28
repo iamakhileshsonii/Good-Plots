@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { filterProperties } from "../../services/propertyApi";
 import { initFlowbite } from "flowbite";
 
-const Filter = () => {
+const Filter = ({ setFeedList }) => {
   useEffect(() => {
     initFlowbite();
   }, []);
@@ -121,7 +121,7 @@ const Filter = () => {
   const applyFilter = async (e) => {
     e.preventDefault();
     const res = await filterProperties(filters);
-    console.log("FILTER RES: ", res);
+    setFeedList(res);
   };
 
   const clearFilter = async (e) => {
@@ -157,7 +157,7 @@ const Filter = () => {
       possession: [],
       amenities: [],
     });
-    console.log("Clear Filter: ", res);
+    setFeedList(res);
   };
 
   return (
@@ -203,7 +203,7 @@ const Filter = () => {
       >
         <button
           className="text-black-dark underline underline-offset-4 py-1 px-4 rounded-md mb-4"
-          data-modal-hide="authentication-modal"
+          data-modal-hide="filter-modal"
           onClick={clearFilter}
         >
           Clear Filters
@@ -211,7 +211,7 @@ const Filter = () => {
         <button
           className="bg-red-dark text-white py-1 px-4 rounded-md mb-4 hover:bg-red-700 transition duration-400 ease-in-out"
           onClick={applyFilter}
-          data-modal-hide="authentication-modal"
+          data-modal-hide="filter-modal"
         >
           Apply Filters
         </button>

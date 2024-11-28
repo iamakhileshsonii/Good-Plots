@@ -178,7 +178,7 @@ const BuyProperty = ({ property }) => {
             <div className="relative p-4 w-full max-w-2xl max-h-full border border-dotted border-black rounded-2xl">
               <div className="flex gap-2 items-center mb-2">
                 <img
-                  src={property?.ownerData.avatar || defaultAvatar}
+                  src={property?.ownerData?.avatar || defaultAvatar}
                   alt="Property Owner"
                   className="w-10 h-10 rounded-full"
                 />

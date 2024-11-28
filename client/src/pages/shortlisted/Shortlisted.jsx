@@ -7,15 +7,16 @@ import { shortlistedFeeds } from "../../services/shortlistApi";
 
 const Shortlisted = () => {
   const [feedList, setFeedList] = useState([]);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchFeeds = async () => {
-      setLoading(true);
       try {
         const res = await shortlistedFeeds();
         if (res) {
           setFeedList(res.data); // Use the correct property from the API response
+          setLoading(false);
+          console.log(res.data);
         }
       } catch (error) {
         toast.error("Unable to fetch shortlisted feeds");
@@ -66,9 +67,11 @@ const Shortlisted = () => {
           feedList.map((feed) => (
             <ShortlistedCard
               key={feed?._id} // Always add a unique key in map
-              feedId={feed?.listingId}
-              id={feed?._id}
+              propertyId={feed?._id}
+              property={feed?.property}
+              user={feed?.user}
             />
+            // <p>Shortlist</p>
           ))
         )}
       </div>

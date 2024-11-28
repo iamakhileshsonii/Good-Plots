@@ -144,6 +144,11 @@ const getFilteredProperty = asyncHandler(async (req, res) => {
 
     const properties = await InitialForm.aggregate([
       {
+        $match: {
+          kyc: "completed",
+        },
+      },
+      {
         $lookup: {
           from: "kyclistings", // MongoDB collection for kycListing
           localField: "_id",

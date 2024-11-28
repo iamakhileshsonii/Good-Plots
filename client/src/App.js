@@ -26,6 +26,7 @@ import ManageUsers from "./pages/manageUsers/ManageUsers";
 import SaleNotation from "./pages/saleNotation/SaleNotation";
 import KycForm from "./pages/forms/KycForm";
 import Toaster from "./lib/Toaster";
+import PrivateRoute from "./routes/PrivateRoute";
 
 const App = () => {
   return (
@@ -37,21 +38,112 @@ const App = () => {
           <Route path="/" element={<Home />} />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
-          <Route path="/dashboard" element={<Dashboard />}>
+          <Route
+            path="/dashboard"
+            element={
+              <PrivateRoute>
+                <Dashboard />
+              </PrivateRoute>
+            }
+          >
             <Route index element={<Overview />} />
-            <Route path="mylistings" element={<Mylistings />} />
-            <Route path="initialform" element={<InitialForm />} />
-            <Route path="profile-setting" element={<Profile />} />
-            <Route path="property-kyc/:params" element={<KycForm />} />
-            <Route path="explore-listings" element={<ExploreListings />} />
-            <Route path="appointments" element={<Appointments />} />
-            <Route path="messages" element={<Messages />}>
-              <Route path="chat/:receiverId" element={<Messages />} />
+            <Route
+              path="mylistings"
+              element={
+                <PrivateRoute>
+                  <Mylistings />
+                </PrivateRoute>
+              }
+            />
+            <Route
+              path="initialform"
+              element={
+                <PrivateRoute>
+                  <InitialForm />
+                </PrivateRoute>
+              }
+            />
+            <Route
+              path="profile-setting"
+              element={
+                <PrivateRoute>
+                  <Profile />
+                </PrivateRoute>
+              }
+            />
+            <Route
+              path="property-kyc/:params"
+              element={
+                <PrivateRoute>
+                  <KycForm />
+                </PrivateRoute>
+              }
+            />
+            <Route
+              path="explore-listings"
+              element={
+                <PrivateRoute>
+                  <ExploreListings />
+                </PrivateRoute>
+              }
+            />
+            <Route
+              path="appointments"
+              element={
+                <PrivateRoute>
+                  <Appointments />
+                </PrivateRoute>
+              }
+            />
+            <Route
+              path="messages"
+              element={
+                <PrivateRoute>
+                  <Messages />
+                </PrivateRoute>
+              }
+            >
+              <Route
+                path="chat/:receiverId"
+                element={
+                  <PrivateRoute>
+                    <Messages />
+                  </PrivateRoute>
+                }
+              />
             </Route>
-            <Route path="liked" element={<Liked />} />
-            <Route path="shortlisted" element={<Shortlisted />} />
-            <Route path="manage-users" element={<ManageUsers />} />
-            <Route path="sale-notations" element={<SaleNotation />} />
+            <Route
+              path="liked"
+              element={
+                <PrivateRoute>
+                  <Liked />
+                </PrivateRoute>
+              }
+            />
+            <Route
+              path="shortlisted"
+              element={
+                <PrivateRoute>
+                  <Shortlisted />
+                </PrivateRoute>
+              }
+            />
+            <Route
+              path="manage-users"
+              element={
+                <PrivateRoute>
+                  <ManageUsers />
+                </PrivateRoute>
+              }
+            />
+            <Route
+              path="sale-notations"
+              element={
+                <PrivateRoute>
+                  <SaleNotation />
+                </PrivateRoute>
+              }
+            />
           </Route>
           <Route path="property/:params" element={<SingleProperty />} />
           <Route path="/logout" element={<Logout />} />
