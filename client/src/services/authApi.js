@@ -1,8 +1,9 @@
-import { API_URL } from "./api";
 import axios from "axios";
+import { API_URL, getMessagesApi } from "./api";
 
 //REGISTER USER
 export const registerUser = async (userData) => {
+  console.log("API URL: ", API_URL);
   try {
     const response = await axios.post(`${API_URL}/user/register`, userData, {
       headers: {
@@ -45,7 +46,7 @@ export const loginUser = async ({ email, password }) => {
 
     return response;
   } catch (error) {
-    console.log("Something went wrong with Login api!!!");
+    console.log("Something went wrong with Login api!!!", API_URL);
     return null;
   }
 };

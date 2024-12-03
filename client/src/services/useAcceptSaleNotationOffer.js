@@ -1,5 +1,6 @@
 import axios from "axios";
 import React, { useState } from "react";
+import { API_URL } from "./api";
 
 const useAcceptSaleNotationOffer = () => {
   const authToken = localStorage.getItem("goodplotsAuthToken");
@@ -9,7 +10,7 @@ const useAcceptSaleNotationOffer = () => {
     try {
       setLoading(true);
       const res = await axios.patch(
-        `http://localhost:3001/api/v1/saleNotation/accept-offer/${coversationId}`,
+        `${API_URL}/saleNotation/accept-offer/${coversationId}`,
         {},
         {
           headers: {

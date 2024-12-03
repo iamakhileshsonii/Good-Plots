@@ -1,5 +1,6 @@
 import axios from "axios";
 import React, { useState } from "react";
+import { API_URL } from "./api";
 
 const useAssignLawyerPincode = () => {
   const [lawyerLoading, setlawyerLoading] = useState(false);
@@ -11,14 +12,12 @@ const useAssignLawyerPincode = () => {
       return;
     }
 
-    console.log("Frontend - Received Pincodes:", selectedPincodes);
-    console.log("Frontend - User ID:", user?._id);
     setlawyerLoading(true);
     setError(null); // Clear any existing error
 
     try {
       const res = await axios.post(
-        `http://localhost:3001/api/v1/user/assign-pincode-to-lawyer/${user?._id}`,
+        `${API_URL}/user/assign-pincode-to-lawyer/${user?._id}`,
         { pincodes: selectedPincodes } // Sending as an object with 'pincodes' key
       );
       setlawyerLoading(false);

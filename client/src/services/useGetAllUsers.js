@@ -1,6 +1,7 @@
 import axios from "axios";
 import { useContext, useState, useEffect } from "react";
 import { authContext } from "../context/authContext";
+import { API_URL } from "./api";
 
 const useGetAllUsers = () => {
   const [users, setUsers] = useState([]);
@@ -12,14 +13,11 @@ const useGetAllUsers = () => {
     const fetchUsers = async () => {
       setLoading(true);
       try {
-        const response = await axios.get(
-          `http://localhost:3001/api/v1/user/manage-users`,
-          {
-            headers: {
-              Authorization: `Bearer ${authToken}`,
-            },
-          }
-        );
+        const response = await axios.get(`${API_URL}/user/manage-users`, {
+          headers: {
+            Authorization: `Bearer ${authToken}`,
+          },
+        });
         setUsers(response.data.data);
       } catch (error) {
         setError(error);

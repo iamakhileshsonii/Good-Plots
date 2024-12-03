@@ -1,5 +1,6 @@
 import { v2 as cloudinary } from "cloudinary";
 import fs from "fs";
+import path from "path";
 
 const uploadOnCloudinary = async (LocalFilePath) => {
   if (!LocalFilePath) return null;
@@ -7,12 +8,17 @@ const uploadOnCloudinary = async (LocalFilePath) => {
   try {
     cloudinary.config({
       cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
-      api_key: process.env.CLOUDINARY_API_KEY, // Correct environment variable name
+      api_key: process.env.CLOUDINARY_API_KEY,
       api_secret: process.env.CLOUDINARY_SECRET,
     });
 
+    // Extract original filename from the local path
+    const originalFileName = path.basename(LocalFilePath);
+
+    // Upload the file to Cloudinary
     const UploadResult = await cloudinary.uploader.upload(LocalFilePath, {
       resource_type: "auto",
+      public_id: originalFileName, // Optional: set the filename as the public_id
     });
 
     console.log(UploadResult);

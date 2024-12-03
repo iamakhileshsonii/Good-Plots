@@ -1,7 +1,7 @@
 import axios from "axios";
 import React, { useEffect, useState } from "react";
+import { API_URL } from "./api";
 
-const API_URL = "http://localhost:3001/api/v1";
 const authToken = localStorage.getItem("goodplotsAuthToken");
 
 // ShortList Feed

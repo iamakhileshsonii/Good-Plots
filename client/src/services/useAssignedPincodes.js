@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
+import { API_URL } from "./api";
 
 const useAssignedPincodes = () => {
   const [assignedPincodes, setAssignedPincodes] = useState();
@@ -8,9 +9,7 @@ const useAssignedPincodes = () => {
   const fetchedAssignedPincodes = async () => {
     setLoading(true);
     try {
-      const res = await axios.get(
-        `http://localhost:3001/api/v1/user/assingedPins`
-      );
+      const res = await axios.get(`${API_URL}/user/assingedPins`);
       if (res.status === 200 && res.data && res.data.data) {
         setAssignedPincodes(res.data.data); // Set to the correct nested data array
         setLoading(false);

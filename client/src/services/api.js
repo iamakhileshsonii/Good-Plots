@@ -1,6 +1,6 @@
 import axios from "axios";
 
-export const API_URL = "http://localhost:3001/api/v1";
+export const API_URL = process.env.REACT_APP_API_URL;
 export const authToken = localStorage.getItem("goodplotsAuthToken");
 export const AUTH_TOKEN = localStorage.getItem("goodplotsAuthToken");
 
@@ -35,7 +35,7 @@ const refreshAccessToken = async () => {
 
 // Create an Axios instance
 const apiClient = axios.create({
-  baseURL: "http://localhost:3001/api/v1",
+  baseURL: API_URL,
   headers: {
     Authorization: `Bearer ${localStorage.getItem("goodplotsAuthToken")}`, // Initialize with stored token
   },

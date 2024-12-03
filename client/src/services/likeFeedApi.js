@@ -1,7 +1,7 @@
 import axios from "axios";
 import React, { useEffect, useState } from "react";
+import { API_URL, getMessagesApi } from "./api";
 
-const API_URL = "http://localhost:3001/api/v1";
 const authToken = localStorage.getItem("goodplotsAuthToken");
 
 // Like Feed
@@ -39,7 +39,6 @@ export const likedFeeds = async () => {
     });
 
     if (response.status === 200) {
-      console.log("Liked feeds fetched successfully");
       return response.data;
     } else if (response.status === 401) {
       console.log("Unauthorized request");

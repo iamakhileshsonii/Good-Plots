@@ -1,5 +1,6 @@
 import axios from "axios";
 import React, { useEffect, useState } from "react";
+import { API_URL } from "./api";
 
 const useGetPropertyData = (propertyId) => {
   const [property, setProperty] = useState(null); // Initialized with null for better clarity
@@ -10,9 +11,7 @@ const useGetPropertyData = (propertyId) => {
     const fetchData = async () => {
       try {
         setLoading(true);
-        const response = await axios.get(
-          `http://localhost:3001/api/v1/property/${propertyId}`
-        );
+        const response = await axios.get(`${API_URL}/property/${propertyId}`);
 
         if (response.status === 200) {
           setProperty(response.data.data[0]);

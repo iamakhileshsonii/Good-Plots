@@ -1,5 +1,6 @@
 import axios from "axios";
 import React, { useState } from "react";
+import { API_URL, getMessagesApi } from "./api";
 
 const useAssignBrokerPincode = () => {
   const [brokerloading, setBrokerLoading] = useState(false);
@@ -14,7 +15,7 @@ const useAssignBrokerPincode = () => {
     setBrokerLoading(true);
     try {
       const res = await axios.post(
-        `http://localhost:3001/api/v1/user/assign-pincode-to-broker/${user?._id}`,
+        `${API_URL}/user/assign-pincode-to-broker/${user?._id}`,
         { pincodes: selectedPincodes } // Assuming you need to send pincodes in the request body
       );
       setBrokerLoading(false);

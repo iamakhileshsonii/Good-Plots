@@ -1,5 +1,6 @@
 import { useState } from "react";
 import axios from "axios";
+import { API_URL } from "./api";
 
 const useAssignNewPincode = () => {
   const [loading, setLoading] = useState(false);
@@ -14,7 +15,7 @@ const useAssignNewPincode = () => {
     setLoading(true);
     try {
       const res = await axios.post(
-        `http://localhost:3001/api/v1/user/assign-pincode/${user?._id}`,
+        `${API_URL}/user/assign-pincode/${user?._id}`,
         { pincodes: selectedPincodes } // Assuming you need to send pincodes in the request body
       );
       setLoading(false);

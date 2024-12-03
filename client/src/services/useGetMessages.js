@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { getMessagesApi } from "./api";
+import { API_URL } from "./api";
 import axios from "axios";
 import useGetConversations from "../services/useGetConversation";
 import useConversation from "../zustand/useConversation";
@@ -15,7 +15,7 @@ const useGetMessages = () => {
       setLoading(true);
       try {
         const response = await axios.get(
-          `http://localhost:3001/api/v1/chat/${selectedConversation._id}`, // Replace with dynamic ID if needed
+          `${API_URL}/chat/${selectedConversation._id}`, // Replace with dynamic ID if needed
           {
             headers: {
               Authorization: `Bearer ${authToken}`,
@@ -27,7 +27,7 @@ const useGetMessages = () => {
           console.log("Unable to get messages");
           return null;
         }
-        console.log("useGetMessages message: ", response.data.data.message);
+
         setMessages(response.data.data.message);
       } catch (error) {
         console.error(error.message);

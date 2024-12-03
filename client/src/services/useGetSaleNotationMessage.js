@@ -1,6 +1,7 @@
 import axios from "axios";
 import { useState, useEffect, useCallback } from "react";
 import useSaleNotationConversation from "../zustand/useSaleNotationConversation";
+import { API_URL } from "./api";
 
 const useGetSaleNotationMessage = () => {
   const authToken = localStorage.getItem("goodplotsAuthToken");
@@ -20,7 +21,7 @@ const useGetSaleNotationMessage = () => {
     setLoading(true); // Set loading to true before making the API call
     try {
       const res = await axios.get(
-        `http://localhost:3001/api/v1/saleNotation/get-message/${selectedNotationConversation}`,
+        `${API_URL}/saleNotation/get-message/${selectedNotationConversation}`,
         {
           headers: {
             Authorization: `Bearer ${authToken}`,

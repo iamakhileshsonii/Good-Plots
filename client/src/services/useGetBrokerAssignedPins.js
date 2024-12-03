@@ -1,5 +1,6 @@
 import axios from "axios";
 import React, { useEffect, useState } from "react";
+import { API_URL } from "./api";
 
 const useGetBrokerAssignedPins = () => {
   const [brokerPins, setBrokerPins] = useState();
@@ -9,9 +10,7 @@ const useGetBrokerAssignedPins = () => {
     const fetchPins = async () => {
       setLoading(true);
       try {
-        const res = await axios.get(
-          `http://localhost:3001/api/v1/user/assigned-brokers-pins`
-        );
+        const res = await axios.get(`${API_URL}/user/assigned-brokers-pins`);
 
         if (res.status === 200) {
           setBrokerPins(res.data.data);

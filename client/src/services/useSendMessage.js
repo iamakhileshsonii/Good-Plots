@@ -1,6 +1,7 @@
 import { useState } from "react";
 import axios from "axios";
 import useConversation from "../zustand/useConversation";
+import { API_URL } from "./api";
 
 const useSendMessage = () => {
   const [loading, setLoading] = useState(false);
@@ -12,7 +13,7 @@ const useSendMessage = () => {
 
     try {
       const response = await axios.post(
-        `http://localhost:3001/api/v1/chat/send-message/${selectedConversation._id}`,
+        `${API_URL}/chat/send-message/${selectedConversation._id}`,
         { text },
         {
           headers: {
@@ -21,11 +22,7 @@ const useSendMessage = () => {
           },
         }
       );
-      console.log(
-        "SENT BY SELECTED CONVERSATION MESSAGE BY HOOK: ",
-        response.data.data
-      );
-      console.log("SENT MESSAGES IN USE CONVEERSATION: ", messages.message);
+
       setMessages([...messages, response.data.data]);
     } catch (error) {
       console.error(error.message);

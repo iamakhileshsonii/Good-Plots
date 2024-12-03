@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
+import { API_URL } from "./api";
 
 const useGetSaleNotationConversation = (
   propertyId,
@@ -16,7 +17,7 @@ const useGetSaleNotationConversation = (
       try {
         setLoading(true);
         const res = await axios.get(
-          `http://localhost:3001/api/v1/saleNotation/get-conversation`,
+          `${API_URL}/saleNotation/get-conversation`,
           {
             headers: {
               Authorization: `Bearer ${authToken}`,

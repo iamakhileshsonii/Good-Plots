@@ -1,5 +1,6 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
+import { API_URL } from "./api";
 
 const useGetShortlistedFeeds = () => {
   const authToken = localStorage.getItem("goodplotsAuthToken");
@@ -10,14 +11,11 @@ const useGetShortlistedFeeds = () => {
     const fetchShortlistedFeeds = async () => {
       try {
         setLoading(true);
-        const res = await axios.get(
-          `http://localhost:3001/api/v1/shortlist/shortlisted-feeds`,
-          {
-            headers: {
-              Authorization: `Bearer ${authToken}`,
-            },
-          }
-        );
+        const res = await axios.get(`${API_URL}/shortlist/shortlisted-feeds`, {
+          headers: {
+            Authorization: `Bearer ${authToken}`,
+          },
+        });
 
         if (res.status === 200 && Array.isArray(res.data?.data)) {
           setShortlistedFeeds(res.data.data);

@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
+import { API_URL } from "./api";
 
 const useMyListings = () => {
   const authToken = localStorage.getItem("goodplotsAuthToken");
@@ -11,14 +12,11 @@ const useMyListings = () => {
     const fetchData = async () => {
       try {
         setLoading(true);
-        const response = await axios.get(
-          `http://localhost:3001/api/v1/user/my-listings`,
-          {
-            headers: {
-              Authorization: `Bearer ${authToken}`,
-            },
-          }
-        );
+        const response = await axios.get(`${API_URL}/user/my-listings`, {
+          headers: {
+            Authorization: `Bearer ${authToken}`,
+          },
+        });
 
         if (response.status === 200) {
           setMyListings(response.data.data);

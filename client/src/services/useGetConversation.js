@@ -1,6 +1,7 @@
 import { useEffect, useState, useContext } from "react";
 import axios from "axios";
 import { authContext } from "../context/authContext";
+import { API_URL } from "./api";
 
 const useGetConversations = () => {
   const [loading, setLoading] = useState(false);
@@ -14,7 +15,7 @@ const useGetConversations = () => {
       setError(null); // Reset error state before making the API call
       try {
         const response = await axios.post(
-          `http://localhost:3001/api/v1/chat/users`,
+          `${API_URL}/chat/users`,
           {},
           {
             headers: {

@@ -1,5 +1,6 @@
 import axios from "axios";
 import React, { useEffect, useState } from "react";
+import { API_URL } from "./api";
 
 const useGetLawyerAssignedPins = () => {
   const [lawyerPins, setLawyerPins] = useState([]);
@@ -9,9 +10,7 @@ const useGetLawyerAssignedPins = () => {
     const fetchPins = async () => {
       setLoading(true);
       try {
-        const res = await axios.get(
-          `http://localhost:3001/api/v1/user/assigned-lawyers-pins`
-        );
+        const res = await axios.get(`${API_URL}/user/assigned-lawyers-pins`);
 
         if (res.status === 200) {
           setLawyerPins(res.data.data);

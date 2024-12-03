@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
+import { API_URL } from "./api";
 
-const API_URL = "http://localhost:3001/api/v1";
 const authToken = localStorage.getItem("goodplotsAuthToken");
 
 const usePropertyData = (feedId) => {

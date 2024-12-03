@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import axios from "axios";
+import { API_URL } from "./api";
 
 const useRegisterUser = () => {
   const [loading, setLoading] = useState(false);
@@ -10,15 +11,11 @@ const useRegisterUser = () => {
     setMessage("Submitting..."); // Indicate registration process has started
 
     try {
-      const response = await axios.post(
-        `http://localhost:3001/api/v1/user/register`,
-        userData,
-        {
-          headers: {
-            "Content-Type": "multipart/form-data",
-          },
-        }
-      );
+      const response = await axios.post(`${API_URL}/user/register`, userData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
       setLoading(false);
       setMessage("Registration successful!"); // Indicate success
       return response.data;

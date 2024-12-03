@@ -1,8 +1,8 @@
 //Property API's
 
 import axios from "axios";
+import { API_URL, AUTH_TOKEN } from "./api";
 
-const API_URL = "http://localhost:3001/api/v1";
 const authToken = localStorage.getItem("goodplotsAuthToken");
 
 const getVerifiedProperties = async () => {
@@ -63,4 +63,32 @@ const filterProperties = async (filters) => {
   }
 };
 
-export { getVerifiedProperties, getPendingProperties, filterProperties };
+const addNewProperty = async (formData) => {
+  try {
+    const response = await axios.post(
+      `${API_URL}/form/initial-form`,
+      formData,
+      {
+        headers: {
+          Authorization: `Bearer ${AUTH_TOKEN}`,
+        },
+      }
+    );
+
+    if (response.status !== 200) {
+      console.log("Unable to submit the property");
+      return null;
+    }
+
+    return response.data;
+  } catch (error) {
+    console.log("Something went wrong while adding new property", error);
+  }
+};
+
+export {
+  getVerifiedProperties,
+  getPendingProperties,
+  filterProperties,
+  addNewProperty,
+};

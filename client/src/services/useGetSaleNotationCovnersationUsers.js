@@ -1,5 +1,6 @@
 import axios from "axios";
 import React, { useEffect, useState } from "react";
+import { API_URL } from "./api";
 
 const useGetSaleNotationCovnersationUsers = () => {
   const authToken = localStorage.getItem("goodplotsAuthToken");
@@ -10,14 +11,11 @@ const useGetSaleNotationCovnersationUsers = () => {
     const fetchCon = async () => {
       try {
         setLoading(true);
-        const res = await axios.get(
-          `http://localhost:3001/api/v1/saleNotation/get-users`,
-          {
-            headers: {
-              Authorization: `Bearer ${authToken}`,
-            },
-          }
-        );
+        const res = await axios.get(`${API_URL}/saleNotation/get-users`, {
+          headers: {
+            Authorization: `Bearer ${authToken}`,
+          },
+        });
 
         if (res.status === 200) {
           setSaleNotationConvoUsers(res.data.data);
