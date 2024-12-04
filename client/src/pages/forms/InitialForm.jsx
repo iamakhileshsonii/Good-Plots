@@ -1,24 +1,13 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { submitInitialForm } from "../../services/api";
 import { addNewProperty } from "../../services/propertyApi";
 import { useNavigate } from "react-router-dom";
+import { isFormComplete, validateField } from "../../utils/validation";
 import toast from "react-hot-toast";
 
 const InitialForm = () => {
   const navigate = useNavigate();
-
-  const [saleType, setSaleType] = useState("");
-  const [title, setTitle] = useState("");
-  const [propertySubtype, setPropertySubtype] = useState("");
-  const [description, setDescription] = useState("");
-  const [addressLine, setAddressLine] = useState("");
-  const [city, setCity] = useState("");
-  const [state, setState] = useState("");
-  const [isNegotiable, setIsNegotiable] = useState("");
-  const [pincode, setPincode] = useState("");
-  const [totalArea, setTotalArea] = useState("");
-  const [expectedPrice, setExpectedPrice] = useState("");
-
+  const [errors, setErrors] = useState({});
   const [formData, setFormData] = useState({
     saleType: "",
     title: "",
@@ -70,46 +59,31 @@ const InitialForm = () => {
       type: "number",
     },
   ];
-
+  //Handle Changes
   const handleOnchange = async (e) => {
     const { name, value } = e.target;
+
+    const isFieldValid = validateField(
+      value,
+      formFields.find((field) => field.name == name).type
+    );
+
+    setErrors((prevError) => ({ ...prevError, [name]: !isFieldValid }));
+
     setFormData((prevData) => ({ ...prevData, [name]: value }));
   };
-
+  //Submit form
   const handleSubmit = async (e) => {
     e.preventDefault();
-    // const fields = {
-    //   saleType,
-    //   title,
-    //   propertySubtype,
-    //   description,
-    //   address: {
-    //     addressLine,
-    //     city,
-    //     state,
-    //     pincode,
-    //   },
-    //   totalArea,
-    //   expectedPrice,
-    //   isNegotiable,
-    // };
-
-    console.log("FORM SUBMITTED WITH: ", formData);
     const property = await addNewProperty(formData);
     if (property) {
       toast.success("🏠 New property published");
       navigate("/dashboard/mylistings");
     }
-    // const data = await submitInitialForm(fields);
-    // if (data) {
-    //   toast.success("Property submitted successfully");
-    //   navigate("/dashboard/mylistings");
-    // } else {
-    //   toast.error("Unable to submit the form");
-    // }
-
-    console.log("FORM SUBMITTED WITH: ", formData);
   };
+
+  useEffect(() => {}, [formData, errors]);
+
   return (
     <div className="sm:py-10">
       <h2 className="sm:text-xl text-center font-bold text-red">
@@ -168,8 +142,12 @@ const InitialForm = () => {
                 className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                 placeholder={`Enter ${field.title}`}
                 onChange={handleOnchange}
-                required
               />
+            )}
+            {errors[field.name] && (
+              <span className="text-red-500 text-xs">
+                Invalid {field.title}
+              </span>
             )}
           </div>
         ))}
