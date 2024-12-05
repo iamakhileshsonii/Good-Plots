@@ -2,28 +2,26 @@ import React, { useState, useEffect } from "react";
 import useKyc from "../../../../zustand/useKyc"; // Import the Zustand store
 import { isFormComplete, validateField } from "../../../../utils/validation";
 
-const AreaDetails = ({ data, nextStep }) => {
-  const { updateFormData, formData } = useKyc(); // Access the updateFormData function from Zustand
-  const [localData, setLocalData] = useState(data || "");
+const AreaDetails = () => {
+  const { updateKycFormData, nextStep, kycData } = useKyc(); // Access the updateFormData function from Zustand
+
   const [errors, setErrors] = useState({});
-  const [propertyArea, setPropertyArea] = useState({
-    superArea: "",
-    length: "",
-    breadth: "",
-    facing: "EAST", // Default value
-    carpetArea: "",
-    builtUpArea: "",
-    yearOfConstruction: "",
-    ageOfTheProperty: "",
-  });
+
+  const [formData, setFormData] = useState(
+    kycData.areaDetails || {
+      superArea: "",
+      length: "",
+      breadth: "",
+      facing: "",
+      carpetArea: "",
+      builtUpArea: "",
+      yearOfConstruction: "",
+      ageOfTheProperty: "",
+    }
+  );
   const [isFormFilled, setIsFormFilled] = useState(false);
 
   //Check for existing values
-  useEffect(() => {
-    if (formData.areaDetails) {
-      setPropertyArea(formData.areaDetails);
-    }
-  }, [formData.areaDetails]);
 
   // Handle input changes
   const handleInputChange = (e) => {
@@ -39,41 +37,22 @@ const AreaDetails = ({ data, nextStep }) => {
       [name]: !isValid,
     }));
 
-    const updatedArea = {
-      ...propertyArea,
-      [name]: value,
-    };
-
-    setPropertyArea(updatedArea);
-    setLocalData((prevData) => ({
+    setFormData((prevData) => ({
       ...prevData,
       [name]: value,
     }));
-
-    // Optionally push updates immediately to Zustand
-    updateFormData("areaDetails", updatedArea);
   };
 
   // Check form completion
   useEffect(() => {
     const checkCompletion = async () => {
-      const complete = await isFormComplete(propertyArea);
+      const complete = await isFormComplete(formData);
       const hasErrors = Object.values(errors).some((error) => error);
       setIsFormFilled(complete && !hasErrors);
     };
 
     checkCompletion();
-  }, [propertyArea, errors]);
-
-  // Submit and push to Zustand
-  const nextForm = async (e) => {
-    console.log("Submitting Area Details: ", propertyArea);
-
-    // Push the final data to Zustand
-    updateFormData("areaDetails", propertyArea);
-
-    nextStep(e); // Proceed to the next step
-  };
+  }, [formData, errors]);
 
   const fields = [
     { label: "Super Area", name: "superArea", type: "number" },
@@ -95,6 +74,12 @@ const AreaDetails = ({ data, nextStep }) => {
     { label: "Age of the Property", name: "ageOfTheProperty", type: "number" },
   ];
 
+  // Submit and push to Zustand
+  const nextForm = async (e) => {
+    updateKycFormData("areaDetails", formData);
+    nextStep(e); // Proceed to the next step
+  };
+
   return (
     <div className="">
       <h4 className="font-semibold text-lg text-center">Area Details</h4>
@@ -105,7 +90,7 @@ const AreaDetails = ({ data, nextStep }) => {
             {field.type === "select" ? (
               <select
                 name={field.name}
-                value={propertyArea[field.name]}
+                value={formData[field.name]}
                 onChange={handleInputChange}
                 className={`p-1 text-sm rounded-md border-none bg-black ${
                   errors[field.name] ? "border-red-500" : ""
@@ -121,7 +106,7 @@ const AreaDetails = ({ data, nextStep }) => {
               <input
                 type={field.type}
                 name={field.name}
-                value={propertyArea[field.name]}
+                value={formData[field.name]}
                 onChange={handleInputChange}
                 className={`p-1 text-sm rounded-md border-none bg-black ${
                   errors[field.name] ? "border-red-500" : ""
@@ -136,19 +121,19 @@ const AreaDetails = ({ data, nextStep }) => {
           </div>
         ))}
       </div>
+
       {isFormFilled ? (
-        <div className="mt-4 text-center">
+        <div className="flex justify-end">
           <button
+            className="w-20 h-8 text-sm text-white px-4 py-2 rounded-md bg-red-dark my-5"
             onClick={nextForm}
-            disabled={!isFormFilled}
-            className={`w-8 h-8 text-sm text-white bg-red-dark rounded-full ${
-              !isFormFilled ? "opacity-50 cursor-not-allowed" : ""
-            }`}
           >
-            <i className="fa-solid fa-angle-right text-lg"></i>
+            Next Step
           </button>
         </div>
-      ) : null}
+      ) : (
+        ""
+      )}
     </div>
   );
 };

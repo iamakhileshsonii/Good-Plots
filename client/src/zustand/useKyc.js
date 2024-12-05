@@ -1,17 +1,19 @@
 import { create } from "zustand";
 
 const useKyc = create((set) => ({
-  totalStep: 4,
+  totalStep: 6,
   currentStep: 1,
-  formData: {
+  kycData: {
     areaDetails: {},
     proximityDetails: {},
     propertyCharges: {},
     parkingAndSociety: {},
+    amenities: {},
+    propertyImages: {},
   },
-  updateFormData: (section, data) =>
+  updateKycFormData: (section, data) =>
     set((state) => ({
-      formData: { ...state.formData, [section]: data },
+      kycData: { ...state.kycData, [section]: data }, // Update the correct field
     })),
   nextStep: () =>
     set((state) => ({
@@ -23,7 +25,7 @@ const useKyc = create((set) => ({
     })),
   submitKyc: () =>
     set((state) => {
-      console.log("submitKyc", state.formData);
+      console.log("submitKyc", state.kycData); // Log the correct state
     }),
 }));
 

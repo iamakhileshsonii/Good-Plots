@@ -173,10 +173,70 @@ const getFilteredProperty = asyncHandler(async (req, res) => {
   }
 });
 
+//Property KYC
+const propertyKyc = asyncHandler(async (req, res) => {
+  const { formData } = req.body;
+  const { propertyId } = req.params;
+
+  console.log("KYC FORM DATA: ", formData);
+  console.log("KYC PROPERTY ID: ", propertyId);
+
+  return res
+    .status(200)
+    .json(new ApiResponse(200, {}, "Property KYC done successfully"));
+});
+
+// Property KYC
+// const propertyKyc = asyncHandler(async (req, res) => {
+//   const { formData } = req.body;
+//   const { propertyId } = req.params;
+
+//   console.log("KYC FORM DATA: ", formData);
+//   console.log("KYC PROPERTY ID: ", propertyId);
+
+//   // Initialize an object to store uploaded file URLs
+//   const uploadedFiles = {};
+
+//   // Loop through req.files and process each file
+//   for (const [field, files] of Object.entries(req.files)) {
+//     if (files && files.length > 0) {
+//       const file = files[0]; // Since maxCount is 1, there should only be one file
+//       // Example: Upload to Cloudinary
+//       try {
+//         const uploadResult = await cloudinary.uploader.upload(file.path);
+//         uploadedFiles[field] = uploadResult.secure_url; // Store URL of the uploaded file
+//       } catch (error) {
+//         console.error(`Error uploading ${field}:`, error);
+//       }
+//     }
+//   }
+
+//   // Now, combine formData and uploadedFiles
+//   const propertyData = {
+//     ...formData,
+//     propertyImages: uploadedFiles, // You can save URLs of uploaded images
+//     propertyId, // Include propertyId in the data
+//   };
+
+//   // Save the property data to the database
+//   try {
+//     const updatedProperty = await Property.findByIdAndUpdate(
+//       propertyId,
+//       propertyData,
+//       { new: true }
+//     );
+//     return res.status(200).json(new ApiResponse(200, updatedProperty, "Property KYC done successfully"));
+//   } catch (error) {
+//     console.error("Error saving property data:", error);
+//     return res.status(400).json(new ApiResponse(400, null, error.message || "Error processing KYC form"));
+//   }
+// });
+
 export {
   getCurrentPropertyData,
   getProperty,
   getAllVerifiedProperties,
   getAllPendingProperties,
   getFilteredProperty,
+  propertyKyc,
 };

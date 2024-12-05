@@ -1,25 +1,41 @@
-import React, { useState } from "react";
-import { validateField } from "../../../../utils/validation";
+import React, { useEffect, useState } from "react";
+import { isFormComplete, validateField } from "../../../../utils/validation";
+import useKyc from "../../../../zustand/useKyc";
 
 const ProximityDetails = ({ data }) => {
+  const { updateKycFormData, nextStep, kycData } = useKyc();
   const [localData, setLocalData] = useState(data || "");
-  const [error, setError] = useState({});
-  const [proximity, setProximity] = useState({
-    market: "",
-    interStateBusTerminal: "",
-    srSecondarySchool: "",
-    university: "",
-    militaryContonment: "",
-    fireStation: "",
-    barAndRestaurants: "",
-    shoppingMall: "",
-    cinema: "",
-    publicSwimmingPool: "",
-    club: "",
-    townPark: "",
-    golfCourse: "",
-    liquorShop: "",
-  });
+  const [errors, setErrors] = useState({});
+  const [isFormFilled, setIsFormFilled] = useState(false);
+  const [formData, setFormData] = useState(
+    kycData.proximityDetails || {
+      market: "",
+      interStateBusTerminal: "",
+      srSecondarySchool: "",
+      university: "",
+      militaryContonment: "",
+      fireStation: "",
+      barAndRestaurants: "",
+      shoppingMall: "",
+      cinema: "",
+      publicSwimmingPool: "",
+      club: "",
+      townPark: "",
+      golfCourse: "",
+      liquorShop: "",
+    }
+  );
+
+  //Check is the form is completed
+  useEffect(() => {
+    const checkFormCompletion = async () => {
+      const complete = await isFormComplete(formData);
+      const error = Object.values(errors).some((error) => error);
+      setIsFormFilled(complete && !error);
+    };
+
+    checkFormCompletion();
+  }, [formData]);
 
   // Fields for the area details with a shared options array
   const fields = [
@@ -66,15 +82,21 @@ const ProximityDetails = ({ data }) => {
       fields.find((field) => field.name === name).type
     );
 
-    setError((prevError) => ({
+    setErrors((prevError) => ({
       ...prevError,
       [name]: !isValidField,
     }));
 
-    setProximity((prevState) => ({
+    setFormData((prevState) => ({
       ...prevState,
       [name]: value,
     }));
+  };
+
+  // Next Form
+  const nextForm = async (e) => {
+    updateKycFormData("proximityDetails", formData);
+    nextStep(e); // Proceed to the next step
   };
 
   return (
@@ -90,7 +112,7 @@ const ProximityDetails = ({ data }) => {
             </label>
             <select
               name={field.name}
-              value={proximity[field.name]}
+              value={formData[field.name]}
               id={field.name}
               className="p-2 text-sm rounded-md border bg-gray-100"
               onChange={handleInputChange}
@@ -106,8 +128,19 @@ const ProximityDetails = ({ data }) => {
             </select>
           </div>
         ))}
-        {}
       </div>
+      {isFormFilled ? (
+        <div className="flex justify-end">
+          <button
+            className="w-20 h-8 text-sm text-white px-4 py-2 rounded-md bg-red-dark my-5"
+            onClick={nextForm}
+          >
+            Next Step
+          </button>
+        </div>
+      ) : (
+        ""
+      )}
     </div>
   );
 };

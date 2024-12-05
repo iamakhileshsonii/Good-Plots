@@ -35,3 +35,50 @@ export const validateField = (value, type) => {
   // If no type matches, return true (or add more types as needed)
   return true;
 };
+
+export const isValidImage = async (file) => {
+  const validFormats = ["image/png", "image/jpeg"]; // This should be an array
+  const maxSize = process.env.REACT_APP_MAX_IMAGE_UPLOAD_SIZE;
+  const maxSizeInBytes = maxSize * 1024 * 1024; // Convert MB to bytes
+
+  if (!validFormats.includes(file.type)) {
+    return {
+      isValid: false,
+      message: "Invalid file format. Please upload PNG or JPEG",
+    };
+  }
+
+  if (file.size > maxSizeInBytes) {
+    return { isValid: false, message: `File size exceeds ${maxSize}MB` };
+  }
+
+  // If the format and size are valid
+  return { isValid: true, message: "Valid image" };
+};
+
+/**
+ * Validates if all image fields in the form data are non-empty and valid images.
+ * @param {Object} data - The object containing form fields with file objects.
+ * @returns {boolean} - True if all fields are non-empty and valid, otherwise false.
+ */
+export const isAllImagesUploaded = async (data) => {
+  const validFormats = ["image/png", "image/jpeg"];
+  const maxSize = process.env.REACT_APP_MAX_IMAGE_UPLOAD_SIZE;
+  const maxSizeInBytes = maxSize * 1024 * 1024; // Convert MB to bytes
+
+  for (const [key, value] of Object.entries(data)) {
+    if (!value) return false; // Check if the field is empty
+
+    // Validate file type and size
+    if (!validFormats.includes(value.type)) {
+      console.error(`Invalid file format for ${key}`);
+      return false;
+    }
+    if (value.size > maxSizeInBytes) {
+      console.error(`File size exceeds ${maxSize}MB for ${key}`);
+      return false;
+    }
+  }
+
+  return true; // All fields are non-empty and valid
+};

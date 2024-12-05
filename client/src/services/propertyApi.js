@@ -86,9 +86,31 @@ const addNewProperty = async (formData) => {
   }
 };
 
+const propertyKyc = async (formData, propertyId) => {
+  try {
+    const res = await axios.post(
+      `${API_URL}/property/kyc/${propertyId}`,
+      { formData },
+      {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      }
+    );
+
+    if (res.status === 200) {
+      console.log("KYC FORM SUBMITTED: ", res.data);
+      return res.data;
+    }
+  } catch (error) {
+    console.log("Something went wrong while submitting kyc form");
+  }
+};
+
 export {
   getVerifiedProperties,
   getPendingProperties,
   filterProperties,
   addNewProperty,
+  propertyKyc,
 };
