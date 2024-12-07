@@ -5,6 +5,7 @@ import { API_URL, AUTH_TOKEN } from "./api";
 
 const authToken = localStorage.getItem("goodplotsAuthToken");
 
+//Get all verified properties
 const getVerifiedProperties = async () => {
   try {
     const response = await axios.get(`${API_URL}/property/verified-properties`);
@@ -20,6 +21,7 @@ const getVerifiedProperties = async () => {
   }
 };
 
+//Get all pending properties
 const getPendingProperties = async () => {
   try {
     const response = await axios.get(`${API_URL}/property/pending-properties`);
@@ -37,6 +39,7 @@ const getPendingProperties = async () => {
   }
 };
 
+//Filter properties
 const filterProperties = async (filters) => {
   try {
     // Remove filters with empty or default values
@@ -63,6 +66,7 @@ const filterProperties = async (filters) => {
   }
 };
 
+//Add new property
 const addNewProperty = async (formData) => {
   try {
     const response = await axios.post(
@@ -86,14 +90,15 @@ const addNewProperty = async (formData) => {
   }
 };
 
+//Property KYC
 const propertyKyc = async (formData, propertyId) => {
   try {
     const res = await axios.post(
       `${API_URL}/property/kyc/${propertyId}`,
-      { formData },
+      formData,
       {
         headers: {
-          "Content-Type": "multipart/form-data",
+          "Content-Type": "application/json",
         },
       }
     );
@@ -103,7 +108,28 @@ const propertyKyc = async (formData, propertyId) => {
       return res.data;
     }
   } catch (error) {
-    console.log("Something went wrong while submitting kyc form");
+    console.error("Something went wrong while submitting kyc form", error);
+  }
+};
+
+//Upload property kyc images
+const uploadPropertyKycImages = async (formData) => {
+  try {
+    const res = await axios.post(`${API_URL}/property/kyc-images`, formData, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    });
+
+    if (res.status === 200) {
+      console.log("All images uploaded successfully", res.data);
+      return res.data;
+    } else {
+      console.error("Error uploading kyc images", res.data);
+      return null;
+    }
+  } catch (error) {
+    console.error("Something went wrong while uploading kyc images", error);
   }
 };
 
@@ -113,4 +139,5 @@ export {
   filterProperties,
   addNewProperty,
   propertyKyc,
+  uploadPropertyKycImages,
 };

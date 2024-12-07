@@ -21,7 +21,7 @@ router.route("/kyc-listing").post(verifyJWT, kycListing);
 router.route("/initial-form/:formid").get(verifyJWT, getInitialFormData);
 
 //SUBMIT KYC FORM
-router.route("/submit-kyc-form").post(
+router.route("/submit-kyc-form/:id").post(
   upload.fields([
     { name: "siteView", maxCount: 1 },
     { name: "materPlan", maxCount: 1 },

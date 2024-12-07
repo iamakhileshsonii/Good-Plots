@@ -27,6 +27,7 @@ import SaleNotation from "./pages/saleNotation/SaleNotation";
 import KycForm from "./pages/forms/KycForm";
 import Toaster from "./lib/Toaster";
 import PrivateRoute from "./routes/PrivateRoute";
+import Index from "./components/forms/kyc";
 
 const App = () => {
   return (
@@ -75,7 +76,7 @@ const App = () => {
               path="property-kyc/:params"
               element={
                 <PrivateRoute>
-                  <KycForm />
+                  <Index />
                 </PrivateRoute>
               }
             />
@@ -148,6 +149,7 @@ const App = () => {
           <Route path="property/:params" element={<SingleProperty />} />
           <Route path="/logout" element={<Logout />} />
           <Route path="/test" element={<TestPage />} />
+
           <Route path="*" element={<NotFound />} />
         </Routes>
         <Footer />

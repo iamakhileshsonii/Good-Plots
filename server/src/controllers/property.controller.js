@@ -3,6 +3,9 @@ import { asyncHandler } from "../utils/asyncHandler.js";
 import { InitialForm } from "../models/initialFrom.model.js";
 import { ApiResponse } from "../utils/apiResponse.js";
 import { ApiError } from "../utils/ApiError.js";
+import { uploadOnCloudinary } from "../utils/cloudinary.js";
+import fs from "fs";
+import { PropertyKyc } from "../models/propertyKyc.model.js";
 
 const getCurrentPropertyData = asyncHandler(async (req, res) => {
   const { propertyId } = req.params;
@@ -173,64 +176,121 @@ const getFilteredProperty = asyncHandler(async (req, res) => {
   }
 });
 
-//Property KYC
-const propertyKyc = asyncHandler(async (req, res) => {
-  const { formData } = req.body;
-  const { propertyId } = req.params;
+//Upload Kyc Property Images
+const propertyKycImages = asyncHandler(async (req, res) => {
+  const uploadedImages = {};
 
-  console.log("KYC FORM DATA: ", formData);
-  console.log("KYC PROPERTY ID: ", propertyId);
+  for (const [key, value] of Object.entries(req.files)) {
+    for (const file of value) {
+      const { fieldname, path } = file;
+      console.log(`Field Name: ${fieldname} || Path: ${path}`);
+      if (path) {
+        // Upload to Cloudinary
+        const upload = await uploadOnCloudinary(path);
+        if (!upload.url) {
+          throw new ApiError(401, "Unable to upload image to Cloudinary");
+        }
+        console.log("IMAGE UPLOADED TO CLOUDINARY", upload.url);
+
+        // Save only the first URL for each fieldname
+        if (!uploadedImages[fieldname]) {
+          uploadedImages[fieldname] = upload.url; // Store as string
+        }
+      }
+    }
+  }
 
   return res
     .status(200)
-    .json(new ApiResponse(200, {}, "Property KYC done successfully"));
+    .json(
+      new ApiResponse(
+        200,
+        uploadedImages,
+        "All property KYC images uploaded successfully"
+      )
+    );
 });
 
-// Property KYC
-// const propertyKyc = asyncHandler(async (req, res) => {
-//   const { formData } = req.body;
-//   const { propertyId } = req.params;
+//Save Property KYC
+const savePropertyKyc = async (req, res) => {
+  try {
+    const { propertyId } = req.params; // Extract propertyId from the request parameters
+    const formData = req.body; // Get the form data from the request body
+    console.log("REQ BODY RECEIVED: ", formData);
 
-//   console.log("KYC FORM DATA: ", formData);
-//   console.log("KYC PROPERTY ID: ", propertyId);
+    // Check if formData exists
+    if (!formData) {
+      return res.status(400).json({ message: "Form data is required" });
+    }
 
-//   // Initialize an object to store uploaded file URLs
-//   const uploadedFiles = {};
+    // Validate the propertyId exists in the InitialForm collection
+    const property = await InitialForm.findById(propertyId);
+    if (!property) {
+      return res.status(404).json({ message: "Property not found" });
+    }
 
-//   // Loop through req.files and process each file
-//   for (const [field, files] of Object.entries(req.files)) {
-//     if (files && files.length > 0) {
-//       const file = files[0]; // Since maxCount is 1, there should only be one file
-//       // Example: Upload to Cloudinary
-//       try {
-//         const uploadResult = await cloudinary.uploader.upload(file.path);
-//         uploadedFiles[field] = uploadResult.secure_url; // Store URL of the uploaded file
-//       } catch (error) {
-//         console.error(`Error uploading ${field}:`, error);
-//       }
-//     }
-//   }
+    // Prepare the data to be saved into PropertyKyc
+    const propertyKycData = {
+      propertyId: property._id, // Reference to the InitialForm's _id
+      propertySubtype: formData.propertySubtype,
+      area: formData.area, // Ensure area is correctly structured
+      willingToRentOutTo: formData.willingToRentOutTo,
+      totalFlatsInSociety: formData.totalFlatsInSociety,
+      nameOfProjectSociety: formData.nameOfProjectSociety,
+      availableFrom: formData.availableFrom,
+      bedrooms: formData.bedrooms,
+      maxSleepingCapacity: formData.maxSleepingCapacity,
+      isPrivateOrGroupAllowed: formData.isPrivateOrGroupAllowed,
+      maxPrivateOrGroupAllowed: formData.maxPrivateOrGroupAllowed,
+      balconies: formData.balconies,
+      bathrooms: formData.bathrooms,
+      totalFloors: formData.totalFloors,
+      propertyOnFloor: formData.propertyOnFloor,
+      otherRooms: formData.otherRooms,
+      furnishedStatus: formData.furnishedStatus,
+      ifFurnishedOrSemiFurnished: formData.ifFurnishedOrSemiFurnished, // Handle as an object if it's complex
+      reservedParking: formData.reservedParking,
+      coveredParking: formData.coveredParking,
+      openParking: formData.openParking,
+      whetherInCooperativeSociety: formData.whetherInCooperativeSociety,
+      whetherInGatedComplex: formData.whetherInGatedComplex,
+      isThisCornerHouse: formData.isThisCornerHouse,
+      amenities: formData.amenities, // Check if this needs to be an object or string
+      proximity: formData.proximityDetails, // Ensure proximity is structured correctly
+      propertyHasFireSafetyLicense: formData.propertyHasFireSafetyLicense,
+      ageOfTheProperty: formData.ageOfTheProperty,
+      forFeiture: formData.forFeiture,
+      priceDetails: formData.priceDetails, // Handle as an object
+      photos: formData.propertyImages, // Handle photos as an object (assuming object of URLs)
+    };
 
-//   // Now, combine formData and uploadedFiles
-//   const propertyData = {
-//     ...formData,
-//     propertyImages: uploadedFiles, // You can save URLs of uploaded images
-//     propertyId, // Include propertyId in the data
-//   };
+    // Create the PropertyKyc instance
+    const propertyKyc = new PropertyKyc(propertyKycData);
 
-//   // Save the property data to the database
-//   try {
-//     const updatedProperty = await Property.findByIdAndUpdate(
-//       propertyId,
-//       propertyData,
-//       { new: true }
-//     );
-//     return res.status(200).json(new ApiResponse(200, updatedProperty, "Property KYC done successfully"));
-//   } catch (error) {
-//     console.error("Error saving property data:", error);
-//     return res.status(400).json(new ApiResponse(400, null, error.message || "Error processing KYC form"));
-//   }
-// });
+    // Save the new PropertyKyc document
+    await propertyKyc.save();
+
+    //Update kyc status of initial form
+    // Update kyc status of the InitialForm
+    const updatedForm = await InitialForm.findByIdAndUpdate(
+      propertyId,
+      { kyc: "completed" }, // Update the kyc status to "completed"
+      { new: true } // Return the updated document
+    );
+
+    // Return success response
+    return res.status(201).json({
+      message: "Property KYC saved successfully",
+      data: propertyKyc,
+    });
+  } catch (error) {
+    console.error("Error saving Property KYC:", error);
+    return res.status(500).json({
+      message: "Server error while saving Property KYC",
+      error: error.message,
+    });
+  }
+};
 
 export {
   getCurrentPropertyData,
@@ -238,5 +298,6 @@ export {
   getAllVerifiedProperties,
   getAllPendingProperties,
   getFilteredProperty,
-  propertyKyc,
+  savePropertyKyc,
+  propertyKycImages,
 };

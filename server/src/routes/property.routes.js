@@ -2,10 +2,9 @@ import multer from "multer";
 import {
   getAllPendingProperties,
   getAllVerifiedProperties,
-  getCurrentPropertyData,
   getFilteredProperty,
-  getProperty,
-  propertyKyc,
+  propertyKycImages,
+  savePropertyKyc,
 } from "../controllers/property.controller.js";
 import router from "./form.routes.js";
 import { upload } from "../middlewares/multer.middleware.js";
@@ -14,7 +13,8 @@ router.route("/verified-properties").get(getAllVerifiedProperties);
 router.route("/pending-properties").get(getAllPendingProperties);
 router.route("/filter").get(getFilteredProperty);
 
-router.route("/property/kyc/:propertyId").post(
+// Uncomment and modify the route for handling file uploads
+router.route("/kyc-images").post(
   upload.fields([
     { name: "siteView", maxCount: 1 },
     { name: "materPlan", maxCount: 1 },
@@ -27,8 +27,10 @@ router.route("/property/kyc/:propertyId").post(
     { name: "floorPlan", maxCount: 1 },
     { name: "otherPhoto", maxCount: 1 },
   ]),
-  propertyKyc
+  propertyKycImages
 );
+
+router.route("/kyc/:propertyId").post(savePropertyKyc);
 router.route("/:propertyId").get(getFilteredProperty);
 
 export default router;

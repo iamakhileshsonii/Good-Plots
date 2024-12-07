@@ -1,5 +1,5 @@
 import React from "react";
-import SingleListingCard from "./components/SingleListingCard";
+import MyListingPropertyCard from "../../../components/ui/MyListingPropertyCard";
 import useMyListings from "../../../services/useMyListings";
 
 const MyListings = () => {
@@ -19,12 +19,12 @@ const MyListings = () => {
         My Listings {`(${myListings[0]?.listings?.length || 0})`}
       </h2>
 
-      <div className="flex flex-wrap my-5 gap-2">
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
         {myListings[0]?.listings?.length === 0 ? (
           <div>No listings available</div>
         ) : (
           myListings[0]?.listings.map((listing) => (
-            <SingleListingCard key={listing._id} listing={listing} />
+            <MyListingPropertyCard key={listing._id} listing={listing} />
           ))
         )}
       </div>

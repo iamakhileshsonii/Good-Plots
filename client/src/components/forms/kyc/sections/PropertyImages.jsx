@@ -4,12 +4,19 @@ import {
   isAllImagesUploaded,
   isValidImage,
 } from "../../../../utils/validation";
-import { propertyKyc } from "../../../../services/propertyApi";
+import {
+  propertyKyc,
+  uploadPropertyKycImages,
+} from "../../../../services/propertyApi";
+import { useNavigate } from "react-router-dom";
+import toast from "react-hot-toast";
 
-const PropertyImages = () => {
+const PropertyImages = ({ setLoading, propertyId }) => {
+  const navigate = useNavigate();
   const { updateKycFormData, kycData } = useKyc();
   const [errors, setErrors] = useState({});
-  const [isFormFilled, setIsFormFilled] = useState(false);
+  const [isFormFilled, setIsFormFilled] = useState(true);
+
   const [formData, setFormData] = useState(
     kycData.propertyImages || {
       siteView: "",
@@ -51,7 +58,7 @@ const PropertyImages = () => {
       const complete = await isAllImagesUploaded(formData);
       console.log("Check All Images Uploaded: ", complete);
       const error = Object.values(errors).some((error) => error);
-      setIsFormFilled(complete && !error);
+      setIsFormFilled(true);
     };
 
     checkFormCompletion();
@@ -80,7 +87,7 @@ const PropertyImages = () => {
           return updatedPreviews;
         });
 
-        updateKycFormData("propertyImages", formData);
+        // updateKycFormData("propertyImages", formData);
       } else {
         setErrors((prev) => ({
           ...prev,
@@ -92,12 +99,30 @@ const PropertyImages = () => {
 
   const submitKycForm = async () => {
     try {
-      const propertyId = "6711f081a5499113228ec3c7";
-      const res = await propertyKyc(kycData, propertyId);
-      console.log("KYC form submitted", kycData);
-      localStorage.removeItem("previewImages");
+      setLoading(true); // Show loading indicator
+      const images = await uploadPropertyKycImages(formData); // Upload images
+
+      if (images && images.data) {
+        console.log("IMAGES RECEIVED: ", images.data);
+
+        await updateKycFormData("propertyImages", images.data); // Update global state if required
+        const isKycDone = await propertyKyc(kycData, propertyId);
+        if (isKycDone) {
+          console.log("PROPERTY KYC SUCCESSFULL 👌", isKycDone);
+        }
+        navigate("/dashboard/mylistings");
+        // Show success message
+        toast.success("Images uploaded successfully!");
+
+        updateKycFormData("kycData", {}); // Optionally, clear other KYC data as needed
+      } else {
+        throw new Error("No images returned from the server");
+      }
     } catch (error) {
-      console.log("Something went wrong while submitting kyc form");
+      console.error("Error uploading images:", error);
+      toast.error("Failed to upload images. Please try again.");
+    } finally {
+      setLoading(false); // Hide loading indicator
     }
   };
 
