@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import propertyImg from "../../../assets/images/property.jpg";
 import Amenities from "./fields/Amenities";
@@ -6,22 +6,39 @@ import Sidebar from "./fields/Sidebar";
 import TopFacilities from "./fields/TopFacilities";
 import Proximity from "./fields/Proximity";
 import useGetPropertyData from "../../../services/useGetPropertyData";
+import { getProperty } from "../../../services/propertyApi";
 
 const SingleProperty = () => {
-  const params = useParams(); // Correctly extract propertyId
-  const propertyId = params.params;
-  const { property, loading, error } = useGetPropertyData(propertyId);
+  const [loading, setLoading] = useState(false);
+  const [property, setProperty] = useState([]);
+  const propertyId = useParams(); // Correctly extract propertyId
 
-  if (loading) {
+  useEffect(() => {
+    const fetchProperty = async () => {
+      try {
+        loading(true);
+        const res = await getProperty(propertyId.id);
+
+        if (res) {
+          setProperty(res);
+          setLoading(false);
+        } else {
+          setLoading(false);
+          return null;
+        }
+      } catch (error) {
+        console.log("Something went wrong in fetching property details");
+        setLoading(false);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchProperty();
+  }, []);
+
+  if (loading === true) {
     return <div>Loading...</div>;
-  }
-
-  if (error) {
-    return <div>Error: {error.message}</div>;
-  }
-
-  if (!property) {
-    return <div>No property data available</div>;
   }
 
   return (

@@ -4,7 +4,10 @@ import ListView from "./filter/ListView";
 import GridView from "./filter/GridView";
 import { getUserFeed } from "../../../services/api";
 import { initFlowbite } from "flowbite";
-import { filterProperties } from "../../../services/propertyApi";
+import {
+  exploreProperties,
+  filterProperties,
+} from "../../../services/propertyApi";
 import Filter from "../../../components/ui/Filter";
 import PropertyCard from "../../../components/ui/PropertyCard";
 
@@ -21,21 +24,7 @@ const ExploreListings = () => {
     setListingView(!listingView);
   };
 
-  // useEffect(() => {
-  //   async function fetchUserFeed() {
-  //     const response = await getUserFeed();
-  //     if (!response || response.length == 0) {
-  //       console.log("Error fetching user feed");
-  //       setLoading(false);
-  //     } else {
-  //       setFeedList(response);
-  //       setIsFeedAvailable(true);
-  //       setLoading(false);
-  //     }
-  //   }
-  //   fetchUserFeed();
-  // }, [listingView]);
-
+  //Filter Properties
   useEffect(() => {
     const fetchProperties = async () => {
       try {
@@ -72,6 +61,33 @@ const ExploreListings = () => {
     fetchProperties();
   }, []);
 
+  //Explore Listings
+  useEffect(() => {
+    const fetchProperties = async () => {
+      setLoading(true);
+      try {
+        const res = await exploreProperties();
+        if (res) {
+          setFeedList(res);
+          setLoading(false);
+        } else {
+          setFeedList();
+          setLoading(false);
+        }
+      } catch (error) {
+        console.log("Something went wrong while fetching properties", error);
+        setLoading(false);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchProperties();
+  }, []);
+
+  if (loading === true) {
+    return <div>Loading...</div>;
+  }
   return (
     <div className="block">
       <div className="flex flex-wrap justify-between my-4 px-36">
@@ -94,9 +110,9 @@ const ExploreListings = () => {
 
       <div className=" flex flex-wrap justify-start rounded-md">
         {feedList && feedList.length > 0 ? (
-          feedList.map((property, index) => (
+          feedList.map((property) => (
             <PropertyCard
-              key={index}
+              key={property?._id}
               propertyId={property?._id}
               title={property?.title}
               description={property?.description}
@@ -105,14 +121,13 @@ const ExploreListings = () => {
               totalArea={property?.totalArea}
               property={property}
               expectedPrice={property?.expectedPrice}
-              featuredImage={property?.kycDetails.photos.siteView}
+              featuredImage={property?.kycDetails?.photos?.siteView}
             />
           ))
         ) : (
-          <p>0 Property Found</p>
+          <p>0 Listings found</p>
         )}
       </div>
-
       <div
         id="filter-modal"
         tabindex="-1"

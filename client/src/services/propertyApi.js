@@ -39,6 +39,29 @@ const getPendingProperties = async () => {
   }
 };
 
+//Explore Properties
+const exploreProperties = async () => {
+  try {
+    const res = await axios.get(`${API_URL}/property/explore-properties`, {
+      headers: {
+        Authorization: `Bearer ${authToken}`,
+      },
+    });
+
+    if (res.status === 200) {
+      console.log(res.data);
+      return res.data.data;
+    } else {
+      return null;
+    }
+  } catch (error) {
+    console.error(
+      "Something went wrong while fetching explore properties",
+      error
+    );
+  }
+};
+
 //Filter properties
 const filterProperties = async (filters) => {
   try {
@@ -132,7 +155,45 @@ const uploadPropertyKycImages = async (formData) => {
     console.error("Something went wrong while uploading kyc images", error);
   }
 };
+// Delete Property
+const deleteProperty = async (propertyId) => {
+  try {
+    const res = await axios.delete(`${API_URL}/property/delete/${propertyId}`, {
+      headers: {
+        Authorization: `Bearer ${authToken}`,
+      },
+    });
 
+    if (res.status === 200) {
+      console.log("Property deleted successfully", res.data);
+      return res.data;
+    } else {
+      console.error("Error deleting property", res.data);
+      return null;
+    }
+  } catch (error) {
+    console.error("Something went wrong while deleting property", error);
+    return null; // Explicitly return null on error
+  }
+};
+
+//Get single property
+const getProperty = async (propertyId) => {
+  try {
+    const res = await axios.get(`${API_URL}/property/${propertyId}`);
+
+    if (res.status === 200) {
+      console.log("Property fetched successfully", res.data);
+      return res.data;
+    } else {
+      console.error("Error fetching property", res.data);
+      return null;
+    }
+  } catch (error) {
+    console.error("Something went wrong while deleting property", error);
+    return null; // Explicitly return null on error
+  }
+};
 export {
   getVerifiedProperties,
   getPendingProperties,
@@ -140,4 +201,7 @@ export {
   addNewProperty,
   propertyKyc,
   uploadPropertyKycImages,
+  exploreProperties,
+  deleteProperty,
+  getProperty,
 };

@@ -182,12 +182,16 @@ const loginUser = asyncHandler(async (req, res) => {
 
   const options = {
     httpOnly: true,
-    secure: true,
+    secure: false,
+    sameSite: "None", // Necessary for cross-origin requests
+    expires: new Date(Date.now() + 86400000), // Expires in 1 day
   };
+
   return res
     .status(200)
     .cookie("accessToken", accessToken, options)
     .cookie("refreshToken", refreshToken, options)
+    .cookie("test", "Akhilesh")
     .json(
       new ApiResponse(
         200,
@@ -197,28 +201,50 @@ const loginUser = asyncHandler(async (req, res) => {
     );
 });
 
+//CHECK AUTH
+const checkAuth = asyncHandler(async (req, res) => {
+  try {
+    const authUser = await User.findById(req.user._id);
+
+    if (!authUser) {
+      return res
+        .status(404)
+        .json(new ApiResponse(404, {}, "Auth User not found"));
+    }
+
+    return res
+      .status(200)
+      .json(new ApiResponse(200, authUser, "Auth User fetched successfully"));
+  } catch (error) {
+    console.error("Something went wrong while checking auth", error);
+  }
+});
+
 // LOGOUT USER
 const logoutUser = asyncHandler(async (req, res) => {
-  await User.findByIdAndUpdate(
-    req.user?._id,
-    {
-      $set: {
-        refreshToken: null,
+  const authId = req.user._id;
+  try {
+    if (!authId) {
+      throw new ApiError(401, "Unauthorized request");
+    }
+    const user = await User.findByIdAndUpdate(
+      authId,
+      {
+        $unset: {
+          refreshToken: 1,
+        },
       },
-    },
-    { $new: true }
-  );
+      { new: true }
+    );
 
-  const options = {
-    httpOnly: true,
-    secure: true,
-  };
-
-  return res
-    .status(200)
-    .clearcookie("accesToken", options)
-    .clearcookie("refreshToken", options)
-    .json(new ApiResponse(200, {}, "User logged out successfully"));
+    return res
+      .status(200)
+      .clearCookie("accessToken")
+      .clearCookie("refreshToken")
+      .json(new ApiResponse(200, {}, "User logged out successfully"));
+  } catch (error) {
+    console.log("Unable to logout user", error);
+  }
 });
 
 // UPDATE PASSWORD
@@ -652,4 +678,5 @@ export {
   assignedPincodesForBrokers,
   assignPincodeToBroker,
   assignPincodeToLawyer,
+  checkAuth,
 };

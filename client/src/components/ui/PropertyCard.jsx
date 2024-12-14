@@ -8,6 +8,7 @@ import ScheduleAppointment from "../../pages/dashboard/exploreListing/fields/Sch
 import Call from "../../pages/dashboard/exploreListing/fields/Call";
 import useExcerpt from "../../hooks/useExcerpt";
 import useFormatPrice from "../../hooks/useFormatPrice";
+import { deleteProperty } from "../../services/propertyApi";
 
 const PropertyCard = ({
   title,
@@ -22,6 +23,7 @@ const PropertyCard = ({
 }) => {
   const excerpt = useExcerpt(description);
   const price = useFormatPrice(expectedPrice);
+
   return (
     <div className="block shadow-lg border border-black-light sm:w-1/4 m-3 p-3 rounded-xl relative">
       {/* Wrap only the clickable content for navigation */}

@@ -21,6 +21,7 @@ import {
   assignPincodeToLawyer,
   assignedPincodesForBrokers,
   assignedPincodesForLawyers,
+  checkAuth,
 } from "../controllers/user.controller.js";
 import { verifyJWT } from "../middlewares/auth.middleware.js";
 
@@ -28,6 +29,7 @@ import { upload } from "../middlewares/multer.middleware.js";
 
 router.route("/register").post(upload.single("avatar"), registerUser);
 router.route("/login").post(loginUser);
+router.route("/check-auth").post(verifyJWT, checkAuth);
 
 //Secured Routes
 router.route("/logout").post(verifyJWT, logoutUser);

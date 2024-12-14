@@ -1,4 +1,4 @@
-import mongoose from "mongoose";
+import mongoose, { mongo } from "mongoose";
 import { asyncHandler } from "../utils/asyncHandler.js";
 import { InitialForm } from "../models/initialFrom.model.js";
 import { ApiResponse } from "../utils/apiResponse.js";
@@ -6,6 +6,8 @@ import { ApiError } from "../utils/ApiError.js";
 import { uploadOnCloudinary } from "../utils/cloudinary.js";
 import fs from "fs";
 import { PropertyKyc } from "../models/propertyKyc.model.js";
+import { Shortlist } from "../models/shortlist.model.js";
+import { Like } from "../models/like.model.js";
 
 const getCurrentPropertyData = asyncHandler(async (req, res) => {
   const { propertyId } = req.params;
@@ -61,38 +63,104 @@ const getCurrentPropertyData = asyncHandler(async (req, res) => {
     );
 });
 
+// ---------------------NEW CONTROLLERS -------------------
+
+//Get Property
 const getProperty = asyncHandler(async (req, res) => {
-  const { propertyId } = req.params;
+  const propertyId = req.params.propertyId;
 
-  console.log("PROPERTY ID FETCHED: ", propertyId);
+  console.log("PROPERTY IDL : ", propertyId);
 
-  const property = await InitialForm.findById({
-    _id: propertyId,
+  const propertyData = await InitialForm.aggregate([
+    {
+      $match: {
+        _id: new mongoose.Types.ObjectId(propertyId),
+      },
+    },
+    {
+      $lookup: {
+        from: "propertykycs",
+        localField: "_id",
+        foreignField: "propertyId",
+        as: "kycDetails",
+      },
+    },
+  ]);
+
+  if (!res) {
+    return res
+      .status(404)
+      .json(new ApiResponse(404, {}, "Property data not found"));
+  }
+
+  return res
+    .status(200)
+    .json(
+      new ApiResponse(200, propertyData, "Property data fetched successfully")
+    );
+});
+
+//Submit A New Property
+const submitNewProperty = asyncHandler(async (req, res) => {
+  const { formData } = req.body;
+
+  console.log("Initial Form Submitted: ", formData);
+
+  if (!formData) {
+    throw new ApiError(400, "All fields are required");
+  }
+
+  const property = await InitialForm.create({
+    ...formData,
+    owner: new mongoose.Types.ObjectId(req.user._id),
   });
 
   if (!property) {
-    return res.status(200).json(new ApiResponse(200, {}, "No property found"));
+    throw new ApiError(409, "Unable to submit new property");
   }
 
   return res
     .status(200)
-    .json(new ApiResponse(200, property, "Property data fetched successfully"));
+    .json(
+      new ApiResponse(200, property, "New property submitted success fully")
+    );
 });
 
+//Get All Verified Properties
 const getAllVerifiedProperties = asyncHandler(async (req, res) => {
-  const properties = await InitialForm.find({
-    kyc: "completed",
-  });
+  try {
+    const properties = await InitialForm.aggregate([
+      {
+        $match: {
+          kyc: "completed",
+        },
+      },
+      {
+        $lookup: {
+          from: "propertykycs",
+          localField: "_id",
+          foreignField: "propertyId",
+          as: "details",
+        },
+      },
+    ]);
 
-  if (!properties) {
+    if (!properties) {
+      return res
+        .status(200)
+        .json(new ApiResponse(200, {}, "No properties found"));
+    }
     return res
       .status(200)
-      .json(new ApiResponse(200, {}, "No properties found"));
+      .json(
+        new ApiResponse(200, properties, "Properties Fetched Successfully")
+      );
+  } catch (error) {
+    throw new ApiError(500, "Unable to fetch verified properties", error);
   }
-  return res
-    .status(200)
-    .json(new ApiResponse(200, properties, "Properties Fetched Successfully"));
 });
+
+//Get All Pending Properties
 const getAllPendingProperties = asyncHandler(async (req, res) => {
   const properties = await InitialForm.find({
     kyc: "pending",
@@ -106,6 +174,64 @@ const getAllPendingProperties = asyncHandler(async (req, res) => {
   return res
     .status(200)
     .json(new ApiResponse(200, properties, "Properties Fetched Successfully"));
+});
+
+//Get My Pending Properties
+export const getUserPendingProperties = asyncHandler(async (req, res) => {
+  const properties = await InitialForm.find({
+    owner: new mongoose.Types.ObjectId(req.user._id),
+    kyc: "pending",
+  });
+
+  if (!properties) {
+    return res
+      .status(404)
+      .json(new ApiResponse(404, {}, "No pending properties Found"));
+  }
+  return res
+    .status(200)
+    .json(
+      new ApiResponse(
+        200,
+        properties,
+        "All pending properties fetched successfully"
+      )
+    );
+});
+
+//Get user verified properties
+export const getUserVerifiedProperties = asyncHandler(async (req, res) => {
+  const properties = await InitialForm.aggregate([
+    {
+      $match: {
+        kyc: "completed",
+        owner: new mongoose.Types.ObjectId(req.user._id),
+      },
+    },
+    {
+      $lookup: {
+        from: "propertykycs",
+        localField: "_id",
+        foreignField: "propertyId",
+        as: "details",
+      },
+    },
+  ]);
+
+  if (!properties) {
+    return res
+      .status(404)
+      .json(new ApiResponse(404, {}, "No veridfied properties found"));
+  }
+  return res
+    .status(200)
+    .json(
+      new ApiResponse(
+        200,
+        properties,
+        "All verified properties fetched successfully"
+      )
+    );
 });
 
 //Filter Property
@@ -292,6 +418,130 @@ const savePropertyKyc = async (req, res) => {
   }
 };
 
+// Explore Properties
+const exploreProperties = asyncHandler(async (req, res) => {
+  try {
+    const properties = await InitialForm.aggregate([
+      {
+        $match: {
+          owner: { $ne: new mongoose.Types.ObjectId(req.user._id) }, // Exclude current user
+          kyc: "completed",
+        },
+      },
+      {
+        $lookup: {
+          from: "propertykycs", // The name of the collection for KYC details
+          localField: "_id", // Field in InitialForm to match
+          foreignField: "propertyId", // Field in propertykycs to match
+          as: "kycDetails", // Alias for the joined data
+        },
+      },
+    ]);
+
+    if (!properties || properties.length === 0) {
+      return res
+        .status(404)
+        .json(new ApiResponse(404, {}, "No properties found"));
+    }
+
+    return res
+      .status(200)
+      .json(
+        new ApiResponse(200, properties, "Properties fetched successfully")
+      );
+  } catch (error) {
+    console.error(
+      "Something went wrong while fetching properties to explore",
+      error
+    );
+    throw new ApiError(
+      500,
+      "Something went wrong while fetching properties to explore"
+    );
+  }
+});
+
+//Delete Property
+const deleteProperty = asyncHandler(async (req, res) => {
+  const { propertyId } = req.params;
+  try {
+    if (!propertyId) {
+      throw new ApiError(400, "Property Id is required");
+    }
+
+    const deletePropertyKyc = await PropertyKyc.deleteOne({
+      propertyId: propertyId,
+    });
+
+    if (deletePropertyKyc) {
+      const deletedProperty = await InitialForm.deleteOne({ _id: propertyId });
+
+      if (!deletedProperty) {
+        throw new ApiError(409, "Unable to delete selected property");
+      }
+    } else {
+      return res
+        .status(404)
+        .json(
+          new ApiResponse(404, {}, "Property with select property Id not found")
+        );
+    }
+
+    return res
+      .status(200)
+      .json(new ApiResponse(200, {}, "Property deleted successfully"));
+  } catch (error) {
+    console.error("Something went wrong while deleting property", error);
+    throw new ApiError(500, "unable to delete property");
+  }
+});
+
+//Shortlisted Properties
+const getShortlistedProperties = asyncHandler(async (req, res) => {
+  try {
+    const properties = await Shortlist.find({
+      shortlistedBy: new mongoose.Types.ObjectId(req.user._id),
+    });
+
+    if (!properties) {
+      return res.status(404).json(404, {}, "No shortlisted property found");
+    }
+
+    return res
+      .status(200)
+      .json(200, properties, "All Shortlisted properties fetched successfully");
+  } catch (error) {
+    console.error("Unable to fetch shortlisted properties", error);
+  }
+});
+
+//Liked Properties
+const getLikedProperties = asyncHandler(async (req, res) => {
+  try {
+    const properties = await Like.find({
+      likedBy: new mongoose.Types.ObjectId(req.user._id),
+    });
+
+    if (!properties) {
+      return res
+        .status(404)
+        .json(new ApiResponse(404, {}, "No Liked property found"));
+    }
+
+    return res
+      .status(200)
+      .json(
+        new ApiResponse(
+          200,
+          properties,
+          "All liked properties fetched successfully"
+        )
+      );
+  } catch (error) {
+    console.error("Unable to fetch liked properties", error);
+  }
+});
+
 export {
   getCurrentPropertyData,
   getProperty,
@@ -300,4 +550,9 @@ export {
   getFilteredProperty,
   savePropertyKyc,
   propertyKycImages,
+  exploreProperties,
+  deleteProperty,
+  getShortlistedProperties,
+  getLikedProperties,
+  submitNewProperty,
 };

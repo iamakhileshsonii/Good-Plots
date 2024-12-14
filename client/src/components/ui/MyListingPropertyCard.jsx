@@ -2,11 +2,14 @@ import React, { useEffect, useState } from "react";
 import defaultPropertyImg from "../../assets/images/pendingKyc.jpg";
 import useExcerpt from "../../hooks/useExcerpt.js";
 import useShortTitle from "../../hooks/useExcerpt.js";
+import { deleteProperty } from "../../services/propertyApi.js";
+import { useNavigate } from "react-router-dom";
 
 const MyListingPropertyCard = ({ listing }) => {
   const [kycStatus, setKycStatus] = useState(null);
   const title = useShortTitle(listing?.title);
   const excerpt = useExcerpt(listing?.description);
+  const navigate = useNavigate();
 
   useEffect(() => {
     if (listing?.kyc === "pending") {
@@ -23,8 +26,22 @@ const MyListingPropertyCard = ({ listing }) => {
       ? `/dashboard/property-kyc/${listing._id}`
       : `/property/${listing._id}`;
 
+  const handleDelete = async () => {
+    try {
+      const res = await deleteProperty(listing._id);
+      if (res) {
+        console.log(`Property - ${listing._id} deleted successfully`);
+        navigate("/dashboard/mylistings");
+      } else {
+        console.log(`Unable to delete property - ${listing._id}`);
+      }
+    } catch (error) {
+      console.error("Something went wrong while deleting the property");
+    }
+  };
+
   return (
-    <div className="max-w-sm bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700 flex flex-col">
+    <div className="max-w-sm bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700 flex flex-col relative">
       <a href={propertyUrl}>
         <img
           className="rounded-t-lg object-cover w-full h-48"
@@ -32,6 +49,14 @@ const MyListingPropertyCard = ({ listing }) => {
           alt="Property"
         />
       </a>
+
+      <span
+        className="bg-red-dark text-white px-2 py-1 rounded-md absolute right-2 top-2 text-xs"
+        onClick={handleDelete}
+      >
+        <i class="fa-solid fa-trash"></i>
+      </span>
+
       <div className="p-5 flex flex-col flex-grow">
         <a href={propertyUrl}>
           <h5 className="mb-2 text-xl font-bold tracking-tight text-gray-900 dark:text-white">
