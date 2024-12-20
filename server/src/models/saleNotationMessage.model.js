@@ -19,15 +19,13 @@ const saleNotationMessageSchema = new mongoose.Schema(
       type: String,
     },
     offerDetails: {
-      totalPaymentAmount: { type: Number },
-      totalTime: { type: String },
-      earnestMoney: { type: Number },
+      expectedByBuyer_totalPaymentAmount: { type: Number },
+      expectedByBuyer_totalTime: { type: Number },
+      expectedByBuyer_earnestMoney: { type: Number },
+      expectedBySeller_totalPaymentAmount: { type: Number },
+      expectedBySeller_totalTime: { type: Number },
+      expectedBySeller_earnestMoney: { type: Number },
       dateOfPayment: { type: Date },
-      expectedBySeller: {
-        totalPaymentAmount: { type: Number },
-        totalTime: { type: String },
-        earnestMoney: { type: Number },
-      },
       additionalTerms: { type: String },
     },
     agreementDate: {

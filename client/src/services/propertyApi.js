@@ -1,144 +1,127 @@
-//Property API's
-
-import axios from "axios";
-import { API_URL, AUTH_TOKEN } from "./api";
-
-const authToken = localStorage.getItem("goodplotsAuthToken");
+import { apiClient } from "./apiClient";
 
 //Get all verified properties
-const getVerifiedProperties = async () => {
+export const getAllVerifiedProperties = async () => {
   try {
-    const response = await axios.get(`${API_URL}/property/verified-properties`);
+    const res = await apiClient.get("/property/verified-properties");
 
-    if (response.status === 200) {
-      return response.data.data; // Return only the data for simplicity
+    if (res.status == 200) {
+      console.log("Verified Properties", res.data);
+      return res.data.data;
     } else {
-      throw new Error("Failed to fetch verified properties");
+      return null;
     }
   } catch (error) {
-    console.error("Error while fetching verified properties:", error.message);
-    throw error; // Rethrow the error to be handled by the calling function
+    console.error("Unable to fetch verified properties", error);
   }
 };
 
-//Get all pending properties
-const getPendingProperties = async () => {
+//Get Liked Properties
+export const likedProperties = async () => {
   try {
-    const response = await axios.get(`${API_URL}/property/pending-properties`);
+    const res = await apiClient.get(`/property/liked`);
 
-    if (response.status === 200) {
-      return response.data.data;
+    if (res.status == 200) {
+      return res.data.data;
     } else {
-      throw new Error("Failed to fetch verified properties");
+      return null;
     }
   } catch (error) {
-    console.log(
-      "Something went wrong while fetching verified properties",
-      error
-    );
+    console.error("Unable to fetch liked properties", error);
   }
 };
 
-//Explore Properties
-const exploreProperties = async () => {
+//Get ShortListed Properties
+export const shortlistedProperties = async () => {
   try {
-    const res = await axios.get(`${API_URL}/property/explore-properties`, {
-      headers: {
-        Authorization: `Bearer ${authToken}`,
-      },
+    const res = await apiClient.get(`/property/shortlisted`);
+
+    if (res.status == 200) {
+      return res.data.data;
+    } else {
+      return null;
+    }
+  } catch (error) {
+    console.error("Unable to fetch shortlisted properties", error);
+  }
+};
+
+//Publish Property
+export const publishNewProperty = async (formData) => {
+  try {
+    const res = await apiClient.post(`/property/publish-property`, {
+      formData,
     });
 
     if (res.status === 200) {
-      console.log(res.data);
+      return res.data;
+    } else {
+      return null;
+    }
+  } catch (error) {
+    console.error("Something went wrong while publishing new property", error);
+  }
+};
+
+//Get User Pending Properties
+export const getUserVerifiedProperties = async () => {
+  try {
+    const res = await apiClient.get(`/property/user-verified-properties`);
+
+    if (res.status === 200) {
+      console.log("Fetched property: ", res.data);
       return res.data.data;
     } else {
       return null;
     }
   } catch (error) {
     console.error(
-      "Something went wrong while fetching explore properties",
+      "Something went wrong while fetching user verified properties",
       error
     );
+    return null;
   }
 };
 
-//Filter properties
-const filterProperties = async (filters) => {
+//Get User Verified Properties
+export const getUserPendingProperties = async () => {
   try {
-    // Remove filters with empty or default values
-    const cleanedFilters = Object.fromEntries(
-      Object.entries(filters).filter(([key, value]) => {
-        if (Array.isArray(value)) {
-          return value.length > 0; // Include if the array has values
-        }
-        return value !== ""; // Include if the value is not an empty string
-      })
-    );
-
-    // Construct query string from cleaned filters
-    const queryString = new URLSearchParams(cleanedFilters).toString();
-
-    // Make the API call
-    const response = await axios.get(
-      `${API_URL}/property/filter?${queryString}`
-    );
-
-    return response.data.data; // Return the filtered properties
-  } catch (error) {
-    console.error("Something went wrong while filtering the properties", error);
-  }
-};
-
-//Add new property
-const addNewProperty = async (formData) => {
-  try {
-    const response = await axios.post(
-      `${API_URL}/form/initial-form`,
-      formData,
-      {
-        headers: {
-          Authorization: `Bearer ${AUTH_TOKEN}`,
-        },
-      }
-    );
-
-    if (response.status !== 200) {
-      console.log("Unable to submit the property");
-      return null;
-    }
-
-    return response.data;
-  } catch (error) {
-    console.log("Something went wrong while adding new property", error);
-  }
-};
-
-//Property KYC
-const propertyKyc = async (formData, propertyId) => {
-  try {
-    const res = await axios.post(
-      `${API_URL}/property/kyc/${propertyId}`,
-      formData,
-      {
-        headers: {
-          "Content-Type": "application/json",
-        },
-      }
-    );
+    const res = await apiClient.get(`/property/user-pending-properties`);
 
     if (res.status === 200) {
-      console.log("KYC FORM SUBMITTED: ", res.data);
-      return res.data;
+      return res.data.data;
+    } else {
+      return null;
     }
   } catch (error) {
-    console.error("Something went wrong while submitting kyc form", error);
+    console.error(
+      "Something went wrong while fetching user pending properties",
+      error
+    );
+    return null;
+  }
+};
+
+//Get Property
+export const getProperty = async (propertyId) => {
+  try {
+    const res = await apiClient.get(`/property/${propertyId}`);
+
+    if (res.status === 200) {
+      return res.data.data;
+    } else {
+      return null;
+    }
+  } catch (error) {
+    console.error("Something went wrong while getting property details");
   }
 };
 
 //Upload property kyc images
-const uploadPropertyKycImages = async (formData) => {
+export const uploadPropertyKycImages = async (formData) => {
+  console.log("Recieved Form Data for Property Images: ", formData);
   try {
-    const res = await axios.post(`${API_URL}/property/kyc-images`, formData, {
+    const res = await apiClient.post(`/property/kyc-images`, formData, {
       headers: {
         "Content-Type": "multipart/form-data",
       },
@@ -146,7 +129,7 @@ const uploadPropertyKycImages = async (formData) => {
 
     if (res.status === 200) {
       console.log("All images uploaded successfully", res.data);
-      return res.data;
+      return res.data.data;
     } else {
       console.error("Error uploading kyc images", res.data);
       return null;
@@ -155,53 +138,38 @@ const uploadPropertyKycImages = async (formData) => {
     console.error("Something went wrong while uploading kyc images", error);
   }
 };
-// Delete Property
-const deleteProperty = async (propertyId) => {
+
+//Property KYC
+export const applyPropertyKYC = async (formData, propertyId) => {
   try {
-    const res = await axios.delete(`${API_URL}/property/delete/${propertyId}`, {
+    const res = await apiClient.post(`/property/kyc/${propertyId}`, formData, {
       headers: {
-        Authorization: `Bearer ${authToken}`,
+        "Content-Type": "application/json",
       },
     });
 
     if (res.status === 200) {
-      console.log("Property deleted successfully", res.data);
+      console.log("KYC FORM SUBMITTED: ", res.data);
       return res.data;
     } else {
-      console.error("Error deleting property", res.data);
       return null;
     }
   } catch (error) {
-    console.error("Something went wrong while deleting property", error);
-    return null; // Explicitly return null on error
+    console.error("Something went wrong while submitting kyc form", error);
   }
 };
 
-//Get single property
-const getProperty = async (propertyId) => {
+//Delete Property
+export const deleteProperty = async (propertyId) => {
   try {
-    const res = await axios.get(`${API_URL}/property/${propertyId}`);
+    const res = await apiClient.delete(`/property/delete/${propertyId}`);
 
     if (res.status === 200) {
-      console.log("Property fetched successfully", res.data);
       return res.data;
     } else {
-      console.error("Error fetching property", res.data);
       return null;
     }
   } catch (error) {
-    console.error("Something went wrong while deleting property", error);
-    return null; // Explicitly return null on error
+    console.error("Something went wrong while deleting property");
   }
-};
-export {
-  getVerifiedProperties,
-  getPendingProperties,
-  filterProperties,
-  addNewProperty,
-  propertyKyc,
-  uploadPropertyKycImages,
-  exploreProperties,
-  deleteProperty,
-  getProperty,
 };

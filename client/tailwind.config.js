@@ -1,50 +1,70 @@
+/** @type {import('tailwindcss').Config} */
 module.exports = {
-  content: ["./src/**/*.{js,jsx,ts,tsx}", "./node_modules/flowbite/**/*.js"],
+  darkMode: ["class"],
+  content: ["./index.html", "./src/**/*.{ts,tsx,js,jsx}"],
+
   theme: {
-    extend: {
-      colors: {
-        red: {
-          dark: "#7e0000",
-          DEFAULT: "#b40000",
-          light: "#e53737",
-          "light-1": "#ffe0e0",
-        },
-        green: "#00a300",
-        orange: "#fea400",
-        bordercolor: "#C7C7C7",
-        cardbg: "#f6f6f6",
-        lightText: "#969696",
-        black: {
-          dark: "#000000",
-          DEFAULT: "#858585",
-          light: "#dfdfdf",
-        },
-      },
-      fontFamily: {
-        roboto: ["Roboto", "sans-serif"],
-      },
-    },
+  	extend: {
+  		borderRadius: {
+  			lg: 'var(--radius)',
+  			md: 'calc(var(--radius) - 2px)',
+  			sm: 'calc(var(--radius) - 4px)'
+  		},
+  		colors: {
+  			background: 'hsl(var(--background))',
+  			foreground: 'hsl(var(--foreground))',
+  			card: {
+  				DEFAULT: 'hsl(var(--card))',
+  				foreground: 'hsl(var(--card-foreground))'
+  			},
+  			popover: {
+  				DEFAULT: 'hsl(var(--popover))',
+  				foreground: 'hsl(var(--popover-foreground))'
+  			},
+  			primary: {
+  				DEFAULT: 'hsl(var(--primary))',
+  				foreground: 'hsl(var(--primary-foreground))'
+  			},
+  			secondary: {
+  				DEFAULT: 'hsl(var(--secondary))',
+  				foreground: 'hsl(var(--secondary-foreground))'
+  			},
+  			muted: {
+  				DEFAULT: 'hsl(var(--muted))',
+  				foreground: 'hsl(var(--muted-foreground))'
+  			},
+  			accent: {
+  				DEFAULT: 'hsl(var(--accent))',
+  				foreground: 'hsl(var(--accent-foreground))'
+  			},
+  			destructive: {
+  				DEFAULT: 'hsl(var(--destructive))',
+  				foreground: 'hsl(var(--destructive-foreground))'
+  			},
+  			border: 'hsl(var(--border))',
+  			input: 'hsl(var(--input))',
+  			ring: 'hsl(var(--ring))',
+  			chart: {
+  				'1': 'hsl(var(--chart-1))',
+  				'2': 'hsl(var(--chart-2))',
+  				'3': 'hsl(var(--chart-3))',
+  				'4': 'hsl(var(--chart-4))',
+  				'5': 'hsl(var(--chart-5))'
+  			},
+  			sidebar: {
+  				DEFAULT: 'hsl(var(--sidebar-background))',
+  				foreground: 'hsl(var(--sidebar-foreground))',
+  				primary: 'hsl(var(--sidebar-primary))',
+  				'primary-foreground': 'hsl(var(--sidebar-primary-foreground))',
+  				accent: 'hsl(var(--sidebar-accent))',
+  				'accent-foreground': 'hsl(var(--sidebar-accent-foreground))',
+  				border: 'hsl(var(--sidebar-border))',
+  				ring: 'hsl(var(--sidebar-ring))',
+  				'primary-foreground': 'hsl(var(--sidebar-primary-foreground))',
+  				'accent-foreground': 'hsl(var(--sidebar-accent-foreground))'
+  			}
+  		}
+  	}
   },
-  plugins: [
-    require("flowbite/plugin"),
-    function ({ addBase, theme }) {
-      addBase({
-        "*": { fontFamily: theme("fontFamily.roboto") },
-      });
-    },
-    require("daisyui"),
-    require("flowbite/plugin")({
-      charts: true,
-    }),
-  ],
-  daisyui: {
-    themes: false, // Only use your custom colors and styles
-    darkTheme: "dark",
-    base: false, // Disable DaisyUI base styles
-    styled: false, // Prevent DaisyUI from applying its component styles
-    utils: true, // Keep utility classes enabled
-    prefix: "", // No prefix for DaisyUI classnames
-    logs: true, // Show DaisyUI config logs in the console
-    themeRoot: ":root", // The element that receives theme color CSS variables
-  },
+  plugins: [require("tailwindcss-animate")],
 };

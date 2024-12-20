@@ -35,9 +35,7 @@ const userSchema = new mongoose.Schema(
     avatar: {
       type: String, // Fetch URL from cloudinary
     },
-    coverImage: {
-      type: String, // Fetch URL from cloudinary
-    },
+
     address: {
       type: String,
     },

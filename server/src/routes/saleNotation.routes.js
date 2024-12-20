@@ -3,8 +3,10 @@ import { verifyJWT } from "../middlewares/auth.middleware.js";
 import {
   acceptSaleNotationConversation,
   checkExistingConversation,
+  getAllConversation,
   getConversationUsers,
   getSaleNotationMessage,
+  isSaleNotationExists,
   saleNotationConversation,
   sendLawyerDocMessage,
   sendSaleNotationMessage,
@@ -13,7 +15,8 @@ import { upload } from "../middlewares/multer.middleware.js";
 
 const router = Router();
 
-router.route("/get-conversation").get(verifyJWT, saleNotationConversation);
+router.route("/is-saleNotation-exists").post(verifyJWT, isSaleNotationExists);
+router.route("/get-conversation").get(verifyJWT, getAllConversation);
 router.route("/get-users").get(verifyJWT, getConversationUsers);
 
 router.route("/send-message").post(verifyJWT, sendSaleNotationMessage);
