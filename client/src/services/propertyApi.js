@@ -16,6 +16,22 @@ export const getAllVerifiedProperties = async () => {
   }
 };
 
+//Explore Properties
+export const exploreProperties = async () => {
+  try {
+    const res = await apiClient.get("/property/explore-properties");
+
+    if (res.status == 200) {
+      console.log("Verified Properties", res.data);
+      return res.data.data;
+    } else {
+      return null;
+    }
+  } catch (error) {
+    console.error("Unable to fetch verified properties", error);
+  }
+};
+
 //Get Liked Properties
 export const likedProperties = async () => {
   try {
@@ -171,5 +187,21 @@ export const deleteProperty = async (propertyId) => {
     }
   } catch (error) {
     console.error("Something went wrong while deleting property");
+  }
+};
+
+//Like Property
+export const likeProperty = async () => {
+  try {
+  } catch (error) {
+    console.error("Something went wrong while liking the property");
+  }
+};
+
+//Shortlist Property
+export const shortlistProperty = async () => {
+  try {
+  } catch (error) {
+    console.error("Something went wrong while shortlisting the property");
   }
 };

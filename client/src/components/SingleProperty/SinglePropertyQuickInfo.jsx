@@ -13,7 +13,7 @@ const SinglePropertyQuickInfo = ({ property }) => {
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <ul className="space-y-4 text-sm text-gray-700">
+          <ul className="space-y-4 text-sm text-black dark:text-white">
             {/* Subtype */}
             <li className="text-left">
               <strong>Subtype:</strong> {propertySubtype || "N/A"}

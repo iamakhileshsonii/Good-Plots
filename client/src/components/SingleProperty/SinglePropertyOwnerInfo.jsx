@@ -32,7 +32,7 @@ const SinglePropertyOwnerInfo = ({ owner }) => {
           {/* Owner Email */}
           <div className="flex items-center mb-3">
             <Mail className="mr-2 text-gray-500" size={18} />
-            <p className="text-sm text-gray-700">
+            <p className="text-sm text-black dark:text-white">
               {ownerEmail || "Not Available"}
             </p>
           </div>
@@ -40,7 +40,7 @@ const SinglePropertyOwnerInfo = ({ owner }) => {
           {/* Owner Contact */}
           <div className="flex items-center">
             <Phone className="mr-2 text-gray-500" size={18} />
-            <p className="text-sm text-gray-700">
+            <p className="text-sm text-black dark:text-white">
               {ownerContact || "Not Available"}
             </p>
           </div>

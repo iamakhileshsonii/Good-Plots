@@ -21,9 +21,10 @@ const scheduleAppointmentSchema = new mongoose.Schema(
     appointmentTime: {
       type: String,
     },
-    isAccepted: {
-      type: Boolean,
-      default: false,
+    status: {
+      type: String,
+      enum: ["PENDING", "ACCEPTED", "REJECTED"],
+      default: "PENDING",
     },
   },
   { timestamps: true }

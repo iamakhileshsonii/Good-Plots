@@ -42,7 +42,7 @@ const PropertyPage = () => {
           <p>Loading Property...</p>
         </div>
       ) : property ? ( // Show property details if available
-        <div className="min-h-screen bg-gray-50">
+        <div className="min-h-screen bg-gray-50 dark:bg-black">
           {/* Header */}
           <SinglePropertyHeader
             propertyImage={property?.kycDetails[0]?.photos?.siteView}

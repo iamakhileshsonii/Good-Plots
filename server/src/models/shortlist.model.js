@@ -2,9 +2,9 @@ import mongoose from "mongoose";
 
 const shortlistSchema = new mongoose.Schema(
   {
-    listingId: {
+    propertyId: {
       type: mongoose.Types.ObjectId,
-      ref: "Listing",
+      ref: "InitialForm",
     },
     shortlistedBy: {
       type: mongoose.Types.ObjectId,

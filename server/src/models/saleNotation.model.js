@@ -20,8 +20,8 @@ const saleNotationSchema = new mongoose.Schema(
     ],
     status: {
       type: String,
-      enum: ["pending", "accepted", "countered"],
-      default: "pending",
+      enum: ["PENDING", "ACCEPTED", "COUNTERED"],
+      default: "PENDING",
     },
     lastActionBy: {
       type: mongoose.Schema.Types.ObjectId,

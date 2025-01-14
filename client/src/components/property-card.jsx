@@ -7,9 +7,30 @@ import {
 } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Heart, Bookmark, Phone } from "lucide-react";
+import { Heart, Bookmark, Phone, Calendar } from "lucide-react";
 import { Link } from "react-router-dom";
 import defaultImage from "../assets/property.jpg";
+
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
+
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
+import ScheduleAppointment from "./appointment/schedule-appointment";
+import { useState } from "react";
 
 export default function PropertyCard({
   id,
@@ -20,10 +41,15 @@ export default function PropertyCard({
   saleType,
   propertySubtype,
   featuredImage,
+  owner,
 }) {
+  const [isDialogOpen, setIsDialogOpen] = useState(false); // Dialog state
+
+  const openDialog = () => setIsDialogOpen(true);
+  const closeDialog = () => setIsDialogOpen(false);
   return (
-    <Link to={`/property/${id}`} className="block">
-      <Card className="max-w-sm overflow-hidden transition-shadow hover:shadow-lg">
+    <Card className="max-w-sm overflow-hidden transition-shadow hover:shadow-lg">
+      <Link to={`/property/${id}`} className="block">
         <div className="relative w-full h-48">
           <img
             src={featuredImage || defaultImage}
@@ -37,51 +63,119 @@ export default function PropertyCard({
             {saleType === "rent" ? "For Rent" : "For Sale"}
           </Badge>
         </div>
-        <CardHeader>
-          <CardTitle className="flex justify-between items-center">
-            <span>{title}</span>
-            <span className="text-lg font-bold text-green-600">{price}</span>
-          </CardTitle>
-          <p className="text-sm text-muted-foreground">{propertySubtype}</p>
-        </CardHeader>
-        <CardContent>
-          <p className="text-sm text-gray-600">
-            {description.slice(0, 100)}...
-          </p>
-        </CardContent>
-        <CardFooter className="flex justify-between">
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={(e) => {
-              e.preventDefault();
-              console.log("Like clicked");
-            }}
-          >
-            <Heart className="h-4 w-4" />
-          </Button>
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={(e) => {
-              e.preventDefault();
-              console.log("Bookmark clicked");
-            }}
-          >
-            <Bookmark className="h-4 w-4" />
-          </Button>
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={(e) => {
-              e.preventDefault();
-              console.log("Call clicked");
-            }}
-          >
-            <Phone className="h-4 w-4" />
-          </Button>
-        </CardFooter>
-      </Card>
-    </Link>
+      </Link>
+      <CardHeader>
+        <CardTitle className="flex justify-between items-center">
+          <span>{title}</span>
+          <span className="text-lg font-bold text-green-600">{price}</span>
+        </CardTitle>
+        <p className="text-sm text-muted-foreground dark:text-gray-400 text-left">
+          {propertySubtype}
+        </p>
+      </CardHeader>
+      <CardContent>
+        <p className="text-sm text-gray-600 dark:text-white text-left">
+          {description.slice(0, 120)}...
+        </p>
+      </CardContent>
+      <CardFooter className="flex justify-between">
+        <TooltipProvider>
+          <Tooltip>
+            <TooltipTrigger>
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={(e) => {
+                  e.preventDefault();
+                  console.log("Like clicked");
+                }}
+              >
+                <Heart className="h-4 w-4" />
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent>
+              <p>Like</p>
+            </TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
+
+        <TooltipProvider>
+          <Tooltip>
+            <TooltipTrigger>
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={(e) => {
+                  e.preventDefault();
+                  console.log("Bookmark clicked");
+                }}
+              >
+                <Bookmark className="h-4 w-4" />
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent>
+              <p>Shortlist</p>
+            </TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
+
+        <TooltipProvider>
+          <Tooltip>
+            <TooltipTrigger>
+              {" "}
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={(e) => {
+                  e.preventDefault();
+                  console.log("Call clicked");
+                }}
+              >
+                <Phone className="h-4 w-4" />
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent>
+              <p>Call</p>
+            </TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
+
+        <AlertDialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+          <AlertDialogTrigger>
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger>
+                  <Calendar className="h-4 w-4" onClick={openDialog} />
+                </TooltipTrigger>
+                <TooltipContent>
+                  <p>Schedule Appointment</p>
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
+          </AlertDialogTrigger>
+          <AlertDialogContent>
+            <AlertDialogHeader>
+              <AlertDialogTitle>
+                <p>Schedule Appointment</p>
+                <span className="font-normal text-sm text-gray-600 dark:text-white">
+                  Select a date and time for your appointment.
+                </span>
+              </AlertDialogTitle>
+
+              <AlertDialogDescription>
+                <ScheduleAppointment
+                  propertyId={id}
+                  property={title}
+                  saleType={saleType}
+                  propertySubtype={propertySubtype}
+                  owner={owner}
+                  onClose={closeDialog}
+                />
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+          </AlertDialogContent>
+        </AlertDialog>
+      </CardFooter>
+    </Card>
   );
 }

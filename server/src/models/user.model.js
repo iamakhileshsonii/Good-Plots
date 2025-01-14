@@ -30,7 +30,7 @@ const userSchema = new mongoose.Schema(
     },
     role: {
       type: String,
-      enum: ["Admin", "Broker", "Lawyer", "Buyer / Seller", "User / Client"],
+      enum: ["Admin", "Broker", "Lawyer", "Buyer/Seller", "User/Client"],
     },
     avatar: {
       type: String, // Fetch URL from cloudinary

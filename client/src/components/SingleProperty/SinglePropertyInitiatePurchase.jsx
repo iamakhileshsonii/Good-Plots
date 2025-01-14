@@ -56,7 +56,7 @@ const SinglePropertyInitiatePurchase = ({
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <p className="mb-4 text-gray-700 text-sm">
+            <p className="mb-4 text-black dark:text-white text-sm">
               You already have initiate the property purchase.
             </p>
             <Link to={`/account/sale-notation/${saleNotationId}`}>

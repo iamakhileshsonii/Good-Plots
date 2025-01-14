@@ -208,8 +208,8 @@ const checkAuth = asyncHandler(async (req, res) => {
 
     if (!authUser) {
       return res
-        .status(404)
-        .json(new ApiResponse(404, {}, "Auth User not found"));
+        .status(401)
+        .json(new ApiResponse(401, {}, "Unauthorized request"));
     }
 
     return res

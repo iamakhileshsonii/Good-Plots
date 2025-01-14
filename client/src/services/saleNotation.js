@@ -25,6 +25,7 @@ export const getSaleNotationMessages = async (conversationId) => {
     );
 
     if (res.status === 200) {
+      console.log("Sale Messages:", res.data.data);
       return res.data.data;
     } else if (res.status === 404) {
       console.log("NO MESSAGES FOUND ");
@@ -71,5 +72,57 @@ export const isSaleNotationExists = async (owner, propertyId) => {
       "Something went wrong while checking if sale notation exists:",
       error.message
     );
+  }
+};
+
+//Get SaleNotation by Id
+export const getSaleNotationByID = async (conversationId) => {
+  try {
+    const res = await apiClient.get(`/saleNotation/${conversationId}`);
+
+    if (res.status === 200) {
+      return res.data.data[0];
+    } else {
+      return null;
+    }
+  } catch (error) {
+    console.error(
+      "Something went wrong while fetching sale notation with provided ID",
+      error
+    );
+  }
+};
+
+//Counter Offer
+export const counterOffer = async (conversationId, formData) => {
+  try {
+    const res = await apiClient.post(
+      `/saleNotation/counter-offer/${conversationId}`,
+      { formData }
+    );
+
+    if (res.status === 200) {
+      console.log("Message Sent");
+      return res.data.data;
+    }
+  } catch (error) {
+    console.error("Something went wrong while countering the offer", error);
+  }
+};
+
+//Accept Offer
+export const acceptOffer = async (conversationId) => {
+  try {
+    const res = await apiClient.post(
+      `/saleNotation/accept-offer/${conversationId}`
+    );
+
+    console.log("ACCEPT OFFER API: ", res.data);
+
+    if (res.status === 200) {
+      return res.data;
+    }
+  } catch (error) {
+    console.error("Something went wrong while accepting the offer", error);
   }
 };

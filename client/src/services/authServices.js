@@ -13,7 +13,10 @@ const AuthToken = localStorage.getItem("goodPlots-auth");
 // Login
 export const login = async (email, password) => {
   try {
-    const res = await axios.post(`${API_URL}/user/login`, { email, password });
+    const res = await apiClient.post(`/user/login`, {
+      email,
+      password,
+    });
 
     if (res.data) {
       // Save the token to localStorage

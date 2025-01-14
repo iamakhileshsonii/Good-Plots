@@ -716,6 +716,231 @@ const isSaleNotationExists = asyncHandler(async (req, res) => {
     .json(new ApiResponse(200, isNotationExists, "Sale Notation Found"));
 });
 
+//Get Sale Notation By ID
+export const getSaleNotationById = asyncHandler(async (req, res) => {
+  const { conversationId } = req.params;
+
+  const saleNotation = await SaleNotation.aggregate([
+    {
+      $match: {
+        _id: new mongoose.Types.ObjectId(conversationId),
+      },
+    },
+    {
+      $lookup: {
+        from: "initialforms",
+        localField: "property",
+        foreignField: "_id",
+        as: "propertyDetails",
+      },
+    },
+    {
+      $unwind: "$propertyDetails",
+    },
+    {
+      $lookup: {
+        from: "users",
+        localField: "lastActionBy",
+        foreignField: "_id",
+        as: "lastUserAction",
+      },
+    },
+    {
+      $unwind: "$lastUserAction",
+    },
+    {
+      $project: {
+        _id: 1,
+        lastUserAction: {
+          _id: 1,
+          fullname: 1,
+          role: 1,
+          email: 1,
+          phone: 1,
+        },
+        propertyDetails: 1,
+        status: 1,
+        participants: 1,
+        messages: 1,
+      },
+    },
+  ]);
+
+  if (!saleNotation) {
+    throw new ApiError(404, "Sale Notation with Provided ID Not Found");
+  }
+
+  console.log("Conversation ID received: ", conversationId);
+
+  return res
+    .status(200)
+    .json(
+      new ApiResponse(
+        200,
+        saleNotation,
+        `Sale Notation ${conversationId} fetched successfully`
+      )
+    );
+});
+
+//Accept Offer
+export const acceptOffer = asyncHandler(async (req, res) => {
+  const { conversationId } = req.params;
+
+  const conversation = await SaleNotation.findByIdAndUpdate(
+    new mongoose.Types.ObjectId(conversationId),
+    {
+      $set: {
+        status: "ACCEPTED",
+        lastActionBy: new mongoose.Types.ObjectId(req.user),
+      },
+    },
+    {
+      new: true,
+    }
+  );
+
+  if (!conversation) {
+    throw new ApiError(409, "Unable to accept offer");
+  }
+
+  return res
+    .status(200)
+    .json(new ApiResponse(200, conversation, "Offer accepted successfully"));
+});
+
+//Counter Offer
+export const counterOffer = asyncHandler(async (req, res) => {
+  const { conversationId } = req.params;
+  const { formData } = req.body;
+
+  console.log("FORM DATA: ", formData);
+
+  // Check if conversation exists
+  let conversation = await SaleNotation.findById(conversationId);
+
+  if (conversation) {
+    console.log("✅ CONVERSATION FOUND ");
+  }
+
+  // If no conversation exists, create a new one
+  if (!conversation) {
+    console.log("❌ CONVERSATION NOT FOUND: Creating New");
+    throw new ApiError(404, "Conversation Does Not Exists");
+  }
+
+  // Create a new message
+  const newMessage = await SaleNotationMessage.create({
+    saleNotationId: conversationId,
+    sender: new mongoose.Types.ObjectId(formData.sender),
+    offerDetails: formData.offerDetails,
+  });
+
+  // Push the new message into the conversation's messages array
+  conversation.messages.push(newMessage._id);
+  conversation.lastActionBy = new mongoose.Types.ObjectId(req.user._id);
+  await conversation.save();
+
+  // Return success response
+  return res
+    .status(200)
+    .json(new ApiResponse(200, formData, "Message sent successfully"));
+});
+
+//BROKER: Send Message
+export const sendMessageByBroker = asyncHandler(async (req, res) => {
+  const { formData } = req.body;
+
+  console.log("sendMessageByBroker FORM DATA RECEIVED: ", formData);
+
+  // Check if conversation exists
+  let conversation = await SaleNotation.findOne({
+    participants: {
+      $all: [
+        new mongoose.Types.ObjectId(formData.sender),
+        new mongoose.Types.ObjectId(formData.owner),
+      ],
+    },
+    property: new mongoose.Types.ObjectId(formData.propertyId),
+  });
+
+  // If no conversation exists, create a new one
+  if (!conversation) {
+    conversation = await SaleNotation.create({
+      participants: [
+        new mongoose.Types.ObjectId(formData.sender),
+        new mongoose.Types.ObjectId(formData.owner),
+      ],
+      property: new mongoose.Types.ObjectId(formData.propertyId),
+      messages: [],
+    });
+  }
+
+  // Create a new message
+  const newMessage = await SaleNotationMessage.create({
+    saleNotationId: conversation._id,
+    sender: new mongoose.Types.ObjectId(formData.sender),
+    offerDetails: formData.offerDetails,
+  });
+
+  // Push the new message into the conversation's messages array
+  conversation.messages.push(newMessage._id);
+  conversation.lastActionBy = new mongoose.Types.ObjectId(req.user._id);
+  await conversation.save();
+
+  // Return success response
+  return res
+    .status(200)
+    .json(new ApiResponse(200, formData, "Message sent successfully"));
+});
+
+//LAWYER: Send Message
+export const sendMessageByLawyer = asyncHandler(async (req, res) => {
+  const { formData } = req.body;
+
+  console.log("sendMessageByLawyer FORM DATA RECEIVED: ", formData);
+
+  // Check if conversation exists
+  let conversation = await SaleNotation.findOne({
+    participants: {
+      $all: [
+        new mongoose.Types.ObjectId(formData.sender),
+        new mongoose.Types.ObjectId(formData.owner),
+      ],
+    },
+    property: new mongoose.Types.ObjectId(formData.propertyId),
+  });
+
+  // If no conversation exists, create a new one
+  if (!conversation) {
+    conversation = await SaleNotation.create({
+      participants: [
+        new mongoose.Types.ObjectId(formData.sender),
+        new mongoose.Types.ObjectId(formData.owner),
+      ],
+      property: new mongoose.Types.ObjectId(formData.propertyId),
+      messages: [],
+    });
+  }
+
+  // Create a new message
+  const newMessage = await SaleNotationMessage.create({
+    saleNotationId: conversation._id,
+    sender: new mongoose.Types.ObjectId(formData.sender),
+    offerDetails: formData.offerDetails,
+  });
+
+  // Push the new message into the conversation's messages array
+  conversation.messages.push(newMessage._id);
+  conversation.lastActionBy = new mongoose.Types.ObjectId(req.user._id);
+  await conversation.save();
+
+  // Return success response
+  return res
+    .status(200)
+    .json(new ApiResponse(200, formData, "Message sent successfully"));
+});
+
 export {
   saleNotationConversation,
   sendSaleNotationMessage,

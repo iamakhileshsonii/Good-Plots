@@ -10,8 +10,10 @@ import {
   getShortlistedProperties,
   getUserPendingProperties,
   getUserVerifiedProperties,
+  likeProperty,
   propertyKycImages,
   savePropertyKyc,
+  shortlistProperty,
   submitNewProperty,
 } from "../controllers/property.controller.js";
 import router from "./form.routes.js";
@@ -26,7 +28,9 @@ router
 router
   .route("/user-verified-properties")
   .get(verifyJWT, getUserVerifiedProperties);
+router.route("/like/:propertyId").post(verifyJWT, likeProperty);
 router.route("/liked").get(verifyJWT, getLikedProperties);
+router.route("/shortlist/:propertyId").post(verifyJWT, shortlistProperty);
 router.route("/shortlisted").get(verifyJWT, getShortlistedProperties);
 router.route("/publish-property").post(verifyJWT, submitNewProperty);
 router.route("/filter").get(getFilteredProperty);

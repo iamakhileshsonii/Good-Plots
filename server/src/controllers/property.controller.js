@@ -9,62 +9,6 @@ import { PropertyKyc } from "../models/propertyKyc.model.js";
 import { Shortlist } from "../models/shortlist.model.js";
 import { Like } from "../models/like.model.js";
 
-const getCurrentPropertyData = asyncHandler(async (req, res) => {
-  const { propertyId } = req.params;
-
-  console.log(`PROPERTY ID: `, propertyId);
-
-  const data = await InitialForm.aggregate([
-    {
-      $match: {
-        _id: new mongoose.Types.ObjectId(propertyId),
-      },
-    },
-    {
-      $lookup: {
-        from: "kyclistings",
-        localField: "_id",
-        foreignField: "forProperty",
-        as: "propertyData",
-      },
-    },
-    {
-      $unwind: {
-        path: "$propertyData",
-        preserveNullAndEmptyArrays: true,
-      },
-    },
-    {
-      $lookup: {
-        from: "users",
-        localField: "owner",
-        foreignField: "_id",
-        as: "ownerData",
-      },
-    },
-    {
-      $unwind: {
-        path: "$ownerData",
-        preserveNullAndEmptyArrays: true,
-      },
-    },
-  ]);
-
-  console.log(`FETCHED RESPONSE: ${JSON.stringify(data)}`);
-
-  if (!data || data.length === 0) {
-    throw new ApiError(404, "No data found for the current property");
-  }
-
-  res
-    .status(200)
-    .json(
-      new ApiResponse(200, data, "Current property data fetched successfully")
-    );
-});
-
-// ---------------------NEW CONTROLLERS -------------------
-
 //Get Property
 const getProperty = asyncHandler(async (req, res) => {
   const propertyId = req.params.propertyId;
@@ -433,7 +377,7 @@ const exploreProperties = asyncHandler(async (req, res) => {
           from: "propertykycs", // The name of the collection for KYC details
           localField: "_id", // Field in InitialForm to match
           foreignField: "propertyId", // Field in propertykycs to match
-          as: "kycDetails", // Alias for the joined data
+          as: "details", // Alias for the joined data
         },
       },
     ]);
@@ -542,8 +486,71 @@ const getLikedProperties = asyncHandler(async (req, res) => {
   }
 });
 
+//Like Property
+const likeProperty = asyncHandler(async (req, res) => {
+  const { propertyId } = req.params;
+
+  if (!propertyId) {
+    throw new ApiError(400, "Property id is required");
+  }
+
+  const likeExists = await Like.findOne({
+    propertyId: new mongoose.Types.ObjectId(propertyId),
+    likedBy: new mongoose.Types.ObjectId(req.user._id),
+  });
+
+  if (likeExists) {
+    await Like.deleteOne({
+      propertyId: new mongoose.Types.ObjectId(propertyId),
+      likedBy: new mongoose.Types.ObjectId(req.user._id),
+    });
+
+    return res.status(200).json(new ApiResponse(200, {}, "Unliked property"));
+  }
+
+  const newLike = await Like.create({
+    propertyId: new mongoose.Types.ObjectId(propertyId),
+    likedBy: new mongoose.Types.ObjectId(req.user._id),
+  });
+
+  return res.status(200).json(new ApiResponse(200, newLike, "Liked property"));
+});
+
+//Shortlist Property
+const shortlistProperty = asyncHandler(async (req, res) => {
+  const { propertyId } = req.params;
+
+  if (!propertyId) {
+    throw new ApiError(400, "Property Id is required");
+  }
+
+  const alreadyShortlisted = await Shortlist.findOne({
+    propertyId: propertyId,
+    shortlistedBy: new mongoose.Types.ObjectId(req.user._id),
+  });
+
+  if (alreadyShortlisted) {
+    const rejectShortlistedProperty = await Shortlist.deleteOne({
+      propertyId: propertyId,
+      shortlistedBy: new mongoose.Types.ObjectId(req.user._id),
+    });
+
+    return res
+      .status(200)
+      .json(new ApiResponse(200, {}, "Shortlisted property rejected"));
+  }
+
+  const shortlist = await Shortlist.create({
+    propertyId: propertyId,
+    shortlistedBy: new mongoose.Types.ObjectId(req.user._id),
+  });
+
+  if (!shortlist) {
+    throw new ApiError(400, "Failed to shortlist property");
+  }
+});
+
 export {
-  getCurrentPropertyData,
   getProperty,
   getAllVerifiedProperties,
   getAllPendingProperties,
@@ -555,4 +562,6 @@ export {
   getShortlistedProperties,
   getLikedProperties,
   submitNewProperty,
+  shortlistProperty,
+  likeProperty,
 };

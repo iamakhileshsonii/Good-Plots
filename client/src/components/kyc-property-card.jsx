@@ -80,16 +80,18 @@ export default function KycPropertyCard({
             <span>{title}</span>
             <span className="text-lg font-bold text-green-600">{price}</span>
           </CardTitle>
-          <p className="text-sm text-muted-foreground">{propertySubtype}</p>
+          <p className="text-sm text-muted-foreground text-left">
+            {propertySubtype}
+          </p>
         </CardHeader>
 
         <CardContent>
-          <p className="text-sm text-gray-600">
+          <p className="text-sm text-gray-600 text-left">
             {description.slice(0, 100)}...
           </p>
         </CardContent>
 
-        <CardFooter className="flex justify-between">
+        <CardFooter className="flex justify-between mt-6">
           <AlertDialog open={open} onOpenChange={setOpen}>
             <Button variant="ghost" onClick={() => setOpen(true)}>
               <Trash className="h-4 w-4 text-red-600" />

@@ -38,6 +38,7 @@ import {
   FaTimesCircle,
 } from "react-icons/fa";
 import { NavSaleNotation } from "./nav-saleNotations";
+import { NavExploreProperties } from "./nav-explore-properties";
 
 const data = {
   navMain: [
@@ -64,15 +65,15 @@ const data = {
       items: [
         {
           title: "Confirmed",
-          url: "#",
+          url: "/account/appointments/confirmed",
         },
         {
           title: "Requested By Me",
-          url: "#",
+          url: "/account/appointments/requested-by-me",
         },
         {
           title: "Awaiting My Approval",
-          url: "#",
+          url: "/account/appointments/awaiting-my-approval",
         },
       ],
     },
@@ -136,6 +137,7 @@ export function AppSidebar({ ...props }) {
         </SidebarMenu>
       </SidebarHeader>
       <SidebarContent>
+        <NavExploreProperties />
         <NavMain items={data.navMain} />
         <NavSaleNotation />
         <NavSecondary items={data.navSecondary} className="mt-auto" />

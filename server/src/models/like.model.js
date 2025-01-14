@@ -3,7 +3,7 @@ import mongooseAggregatePaginate from "mongoose-aggregate-paginate-v2";
 
 const likeSchema = new mongoose.Schema(
   {
-    listingId: {
+    propertyId: {
       type: mongoose.Types.ObjectId,
       ref: "Listing",
     },

@@ -17,6 +17,9 @@ import PropertyKyc from "./pages/PropertyKyc";
 import KycFormSuccess from "./components/KycForm/subForms/KycFormSucess";
 import Login from "./pages/Login";
 import SaleNotation from "./pages/SaleNotation";
+import ConfirmedAppointments from "./pages/ConfirmedAppointments";
+import AwaitingMyApprovalAppointments from "./pages/AwaitingMyApprovalAppointments";
+import RequestedByMeAppointments from "./pages/RequestedByMeAppointments";
 
 function App() {
   const { loading } = useAuthContext();
@@ -44,6 +47,19 @@ function App() {
         <Route
           path="sale-notation/:conversationId"
           element={<SaleNotation />}
+        />
+        <Route path="explore-properties" element={<ExploreProperties />} />
+        <Route
+          path="appointments/confirmed"
+          element={<ConfirmedAppointments />}
+        />
+        <Route
+          path="appointments/awaiting-my-approval"
+          element={<AwaitingMyApprovalAppointments />}
+        />
+        <Route
+          path="appointments/requested-by-me"
+          element={<RequestedByMeAppointments />}
         />
       </Route>
       <Route path="/property/:propertyId" element={<PropertyPage />} />

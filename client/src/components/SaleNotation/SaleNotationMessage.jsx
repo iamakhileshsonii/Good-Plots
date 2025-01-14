@@ -8,6 +8,8 @@ import SaleNotationOfferTemplate from "./offer-template";
 const SaleNotationMessage = ({ sender, offerDetails, avatar }) => {
   const { authUser } = useAuthContext();
 
+ 
+
   // Ensure IDs are strings for accurate comparison
   const isSender = authUser?._id?.toString() === sender?._id?.toString();
 
@@ -21,7 +23,7 @@ const SaleNotationMessage = ({ sender, offerDetails, avatar }) => {
       <Card
         className={`w-[70%] sm:w-[70%] md:w-[40%] shadow-md rounded-lg ${
           isSender
-            ? "bg-gray-200 text-black dark:text-white dark:bg-gray-200"
+            ? "bg-gray-200 text-black dark:text-white dark:bg-gray-800"
             : "bg-gray-100 text-black dark:text-white dark:bg-gray-800"
         }`}
       >
@@ -62,7 +64,26 @@ const SaleNotationMessage = ({ sender, offerDetails, avatar }) => {
                 }
               />
             ) : (
-              <p className="text-sm">No Offer Details</p>
+              <SaleNotationOfferTemplate
+                expectedByBuyer_earnestMoney={
+                  offerDetails?.expectedByBuyer_earnestMoney
+                }
+                expectedByBuyer_totalPaymentAmount={
+                  offerDetails?.expectedByBuyer_totalPaymentAmount
+                }
+                expectedByBuyer_totalTime={
+                  offerDetails?.expectedByBuyer_totalTime
+                }
+                expectedBySeller_totalPaymentAmount={
+                  offerDetails?.expectedBySeller_totalPaymentAmount
+                }
+                expectedBySeller_totalTime={
+                  offerDetails?.expectedBySeller_totalTime
+                }
+                expectedBySeller_earnestMoney={
+                  offerDetails?.expectedBySeller_earnestMoney
+                }
+              />
             )}
           </div>
         </CardContent>
