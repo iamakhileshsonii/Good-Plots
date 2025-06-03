@@ -456,8 +456,10 @@ const assignNewPincode = asyncHandler(async (req, res) => {
 
 // ASSIGN PINCODES TO BROKER
 const assignPincodeToBroker = asyncHandler(async (req, res) => {
-  const { pincodes } = req.body;
+  const pincodes = req.body;
   const { userId } = req.params;
+
+  console.log("PINCODES RECEIVED ON BACKEND: ", pincodes);
 
   if (!pincodes || pincodes.length === 0) {
     throw new ApiError(400, "Pincode is required");
@@ -468,16 +470,16 @@ const assignPincodeToBroker = asyncHandler(async (req, res) => {
     throw new ApiError(404, "User not found");
   }
 
-  if (user.role !== "1") {
+  if (user.role !== "Broker") {
     throw new ApiError(
       403,
-      "Only users with role 1 (Broker) can be assigned pincodes through this route"
+      "Only users with role Broker can be assigned pincodes through this route"
     );
   }
 
   const existingPincodeUsers = await User.find({
     assignedPincodes: { $in: pincodes },
-    role: "1",
+    role: "Broker",
   });
 
   if (existingPincodeUsers.length > 0) {
@@ -524,16 +526,16 @@ const assignPincodeToLawyer = asyncHandler(async (req, res) => {
     throw new ApiError(404, "User not found");
   }
 
-  if (user.role !== "3") {
+  if (user.role !== "Lawyer") {
     throw new ApiError(
       403,
-      "Only users with role 3 (Lawyer) can be assigned pincodes through this route"
+      "Only users with role Lawyer can be assigned pincodes through this route"
     );
   }
 
   const existingPincodeUsers = await User.find({
     assignedPincodes: { $in: pincodes },
-    role: "3",
+    role: "Lawyer",
   });
 
   if (existingPincodeUsers.length > 0) {
@@ -598,7 +600,7 @@ const assignedPincodes = asyncHandler(async (req, res) => {
 const assignedPincodesForBrokers = asyncHandler(async (req, res) => {
   // Fetch brokers with assigned pincodes
   const brokerPincodes = await User.find({
-    role: "1",
+    role: "Broker",
     assignedPincodes: { $exists: true, $ne: [] },
   }).select("assignedPincodes");
 
@@ -627,7 +629,7 @@ const assignedPincodesForBrokers = asyncHandler(async (req, res) => {
 const assignedPincodesForLawyers = asyncHandler(async (req, res) => {
   // Fetch lawyers with assigned pincodes
   const lawyerPincodes = await User.find({
-    role: "3",
+    role: "Lawyer",
     assignedPincodes: { $exists: true, $ne: [] },
   }).select("assignedPincodes");
 
@@ -652,11 +654,96 @@ const assignedPincodesForLawyers = asyncHandler(async (req, res) => {
     );
 });
 
-// ASSIGN BROKER & LAWYER
-const assignBrokerLawyer = asyncHandler(async (req, res) => {
-  // Get property pincode from frontend
-  // Find user with role Broker(1) and Lawyer(3)
-  // Match if the property pincode is Assigned to lawyer and broker
+//List Of Brokers
+export const allbrokers = asyncHandler(async (req, res) => {
+  const user = await User.find({
+    role: "Broker",
+  });
+
+  if (!user) {
+    return res.status(404).json(new ApiResponse(404, {}, "No brokers found"));
+  }
+
+  return res
+    .status(200)
+    .json(new ApiResponse(200, user, "All brokers fetched successfully"));
+});
+
+//List Of Lawyers
+export const alllawyers = asyncHandler(async (req, res) => {
+  const user = await User.find({
+    role: "Lawyer",
+  });
+
+  if (!user) {
+    return res.status(404).json(new ApiResponse(404, {}, "No lawyers found"));
+  }
+
+  return res
+    .status(200)
+    .json(new ApiResponse(200, user, "All lawyers fetched successfully"));
+});
+
+//List Of Buyer Seller
+export const allbuyerseller = asyncHandler(async (req, res) => {
+  const user = await User.find({
+    role: "Buyer/Seller",
+  });
+
+  if (!user) {
+    return res
+      .status(404)
+      .json(new ApiResponse(404, {}, "No buyer/seller found"));
+  }
+
+  return res
+    .status(200)
+    .json(new ApiResponse(200, user, "All buyer/seller fetched successfully"));
+});
+
+//List Of User Client
+export const alluserclient = asyncHandler(async (req, res) => {
+  const user = await User.find({
+    role: "User/Client",
+  });
+
+  if (!user) {
+    return res
+      .status(404)
+      .json(new ApiResponse(404, {}, "No User/Client found"));
+  }
+
+  return res
+    .status(200)
+    .json(new ApiResponse(200, user, "All User/Client fetched successfully"));
+});
+
+//List Of Admins
+export const alladmins = asyncHandler(async (req, res) => {
+  const user = await User.find({
+    role: "Admin",
+  });
+
+  if (!user) {
+    return res.status(404).json(new ApiResponse(404, {}, "No admins found"));
+  }
+
+  return res
+    .status(200)
+    .json(new ApiResponse(200, user, "All Admin fetched successfully"));
+});
+
+//List Of All Users
+export const allUsers = asyncHandler(async (req, res) => {
+  const user = await User.find();
+
+  if (!user) {
+    return res.status(404).json(new ApiResponse(404, {}, "No admins found"));
+  }
+
+  return res
+    .status(200)
+    .json(new ApiResponse(200, user, "All Admin fetched successfully"));
 });
 
 export {

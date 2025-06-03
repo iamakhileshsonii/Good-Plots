@@ -10,6 +10,8 @@ import {
   getShortlistedProperties,
   getUserPendingProperties,
   getUserVerifiedProperties,
+  isPropertyLiked,
+  isPropertyShortlisted,
   likeProperty,
   propertyKycImages,
   savePropertyKyc,
@@ -34,6 +36,10 @@ router.route("/shortlist/:propertyId").post(verifyJWT, shortlistProperty);
 router.route("/shortlisted").get(verifyJWT, getShortlistedProperties);
 router.route("/publish-property").post(verifyJWT, submitNewProperty);
 router.route("/filter").get(getFilteredProperty);
+router.route("/isLiked/:propertyId").post(verifyJWT, isPropertyLiked);
+router
+  .route("/isShortlisted/:propertyId")
+  .post(verifyJWT, isPropertyShortlisted);
 
 // Uncomment and modify the route for handling file uploads
 router.route("/kyc-images").post(

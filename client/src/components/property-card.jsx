@@ -30,7 +30,10 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import ScheduleAppointment from "./appointment/schedule-appointment";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import LikeProperty from "./like-property";
+import ShortlistProperty from "./shortlist-property";
+import { isPropertyLiked, isPropertyShortlisted } from "@/services/propertyApi";
 
 export default function PropertyCard({
   id,
@@ -44,9 +47,37 @@ export default function PropertyCard({
   owner,
 }) {
   const [isDialogOpen, setIsDialogOpen] = useState(false); // Dialog state
+  const [isLiked, setIsLiked] = useState(false);
+  const [isShortlisted, setIsShortlisted] = useState(false);
 
   const openDialog = () => setIsDialogOpen(true);
   const closeDialog = () => setIsDialogOpen(false);
+
+  //Check if the property is liked
+  const ifPropertyLiked = async () => {
+    const res = await isPropertyLiked(id);
+
+    if (res === true) {
+      setIsLiked(true);
+    } else {
+      setIsLiked(false);
+    }
+  };
+
+  //Check if the property is shortlisted
+  const ifPropertyShortlisted = async () => {
+    const res = await isPropertyShortlisted(id);
+    if (res === true) {
+      setIsShortlisted(true);
+    } else {
+      setIsShortlisted(false);
+    }
+  };
+
+  useEffect(() => {
+    ifPropertyLiked();
+    ifPropertyShortlisted();
+  }, []);
   return (
     <Card className="max-w-sm overflow-hidden transition-shadow hover:shadow-lg">
       <Link to={`/property/${id}`} className="block">
@@ -79,45 +110,17 @@ export default function PropertyCard({
         </p>
       </CardContent>
       <CardFooter className="flex justify-between">
-        <TooltipProvider>
-          <Tooltip>
-            <TooltipTrigger>
-              <Button
-                variant="ghost"
-                size="icon"
-                onClick={(e) => {
-                  e.preventDefault();
-                  console.log("Like clicked");
-                }}
-              >
-                <Heart className="h-4 w-4" />
-              </Button>
-            </TooltipTrigger>
-            <TooltipContent>
-              <p>Like</p>
-            </TooltipContent>
-          </Tooltip>
-        </TooltipProvider>
+        <LikeProperty
+          propertyId={id}
+          isLiked={isLiked}
+          setIsLiked={setIsLiked}
+        />
 
-        <TooltipProvider>
-          <Tooltip>
-            <TooltipTrigger>
-              <Button
-                variant="ghost"
-                size="icon"
-                onClick={(e) => {
-                  e.preventDefault();
-                  console.log("Bookmark clicked");
-                }}
-              >
-                <Bookmark className="h-4 w-4" />
-              </Button>
-            </TooltipTrigger>
-            <TooltipContent>
-              <p>Shortlist</p>
-            </TooltipContent>
-          </Tooltip>
-        </TooltipProvider>
+        <ShortlistProperty
+          propertyId={id}
+          isShortlisted={isShortlisted}
+          setIsShortlisted={setIsShortlisted}
+        />
 
         <TooltipProvider>
           <Tooltip>

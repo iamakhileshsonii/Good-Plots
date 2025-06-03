@@ -34,6 +34,7 @@ const SaleNotationContainer = () => {
 
   const { authUser } = useAuthContext();
 
+  console.log("CUrrent User: ", authUser?.role);
   // Inside SaleNotationContainer:
   const [isDialogOpen, setIsDialogOpen] = useState(false);
 
@@ -117,7 +118,8 @@ const SaleNotationContainer = () => {
         ))}
 
       {/* Next Action */}
-      {saleNotation?.lastUserAction?._id !== authUser?._id ? (
+      {saleNotation?.lastUserAction?._id !== authUser?._id &&
+      saleNotation?.status === "PENDING" ? (
         <div className="flex gap-4 justify-center pt-4">
           <AcceptOffer conversationId={saleNotation?._id} />
           <AlertDialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
@@ -146,12 +148,20 @@ const SaleNotationContainer = () => {
         ""
       )}
 
-      {/* IF OFFER ACCEPTED */}
-      {saleNotation?.status === "ACCEPTED" ? <AgreementDate /> : ""}
-
       {/* IF BROKER HAS ASSIGNED AGREEMENT DATE */}
-      {saleNotation?.lastUserAction?.role === "Broker" ? <AgreementDate /> : ""}
+      {saleNotation?.lastUserAction?.role === "Buyer/Seller" &&
+      saleNotation?.status === "ACCEPTED" &&
+      authUser?.role === "Broker" ? (
+        <AgreementDate />
+      ) : (
+        ""
+      )}
       {/* AGREEMENT DOC */}
+      {saleNotation?.status === "ACCEPTED" && authUser?.role === "Lawyer" ? (
+        <AgreementDocs />
+      ) : (
+        ""
+      )}
     </div>
   );
 };

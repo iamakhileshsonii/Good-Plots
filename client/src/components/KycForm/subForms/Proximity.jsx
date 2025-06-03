@@ -101,7 +101,7 @@ const Proximity = () => {
         onSubmit={proximityForm.handleSubmit(onSubmit)}
         className="space-y-8"
       >
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+        <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 gap-6">
           {fields.map((fieldConfig) => (
             <FormField
               key={fieldConfig.name}
@@ -138,9 +138,9 @@ const Proximity = () => {
             />
           ))}
         </div>
-        <div className="mt-6">
+        <div className="mt-6 flex justify-between ">
           <Button onClick={prevStep}>Previous</Button>
-          <Button type="submit">Submit</Button>
+          <Button type="submit">Next</Button>
         </div>
       </form>
     </Form>

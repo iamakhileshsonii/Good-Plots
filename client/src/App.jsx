@@ -20,6 +20,8 @@ import SaleNotation from "./pages/SaleNotation";
 import ConfirmedAppointments from "./pages/ConfirmedAppointments";
 import AwaitingMyApprovalAppointments from "./pages/AwaitingMyApprovalAppointments";
 import RequestedByMeAppointments from "./pages/RequestedByMeAppointments";
+import ManageUsers from "./pages/ManageUsers";
+import { Test } from "./pages/test";
 
 function App() {
   const { loading } = useAuthContext();
@@ -31,8 +33,10 @@ function App() {
   return (
     <Routes>
       <Route path="/" element={<Home />} />
+      <Route path="/test" element={<Test />} />
       <Route path="/account" element={<Dashboard />}>
         <Route path="profile" element={<Profile />} />
+        <Route path="manage-users" element={<ManageUsers />} />
         <Route path="liked-properties" element={<LikedProperties />} />
         <Route
           path="shortlisted-properties"

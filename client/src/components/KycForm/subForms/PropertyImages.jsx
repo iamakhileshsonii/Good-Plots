@@ -119,7 +119,7 @@ const PropertyImages = () => {
   return (
     <Form {...propertyImageForm}>
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-8">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 p-10">
+        <div className="grid grid-cols-2 md:grid-cols-3 gap-6 p-2">
           {fields.map((formField) => (
             <FormField
               key={formField.id}

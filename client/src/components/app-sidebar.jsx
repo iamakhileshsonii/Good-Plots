@@ -100,8 +100,8 @@ const data = {
   ],
   navSecondary: [
     {
-      title: "Support",
-      url: "#",
+      title: "Manage Users",
+      url: "/account/manage-users",
       icon: LifeBuoy,
     },
     {

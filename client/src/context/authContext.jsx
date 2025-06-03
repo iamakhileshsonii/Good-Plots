@@ -50,7 +50,7 @@ export const AuthProvider = ({ children }) => {
           title: "Logged In",
           description: "User logged in successfully",
         });
-        navigate("/account");
+        navigate("/account/explore-properties");
         setAuthUser(res.user); // Assuming `res.user` contains user details
         setIsAuthenticated(true);
       } else {

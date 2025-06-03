@@ -21,19 +21,22 @@ import { FaChartBar, FaSalesforce } from "react-icons/fa";
 import { Link } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { getSaleNotationConversations } from "@/services/saleNotation";
+import useGetConversation from "@/hooks/useGetConversation";
 
 export function NavSaleNotation() {
   const { isMobile } = useSidebar();
-  const [conversations, setConversations] = useState();
+  const [conversationss, setConversations] = useState();
+
+  // const { loading, conversations } = useGetConversation();
 
   //Fetch Conversations
   const fetchConversations = async () => {
     const res = await getSaleNotationConversations();
-
+    console.log("CONVERSATION GETTING NOW", res);
     if (res) {
       setConversations(res);
     } else {
-      setConversations([]);
+      setConversations(null);
     }
   };
 
@@ -44,8 +47,8 @@ export function NavSaleNotation() {
   return (
     <SidebarGroup className="group-data-[collapsible=icon]:hidden">
       <SidebarGroupLabel>Sale Notations</SidebarGroupLabel>
-      {conversations &&
-        conversations.map((conversation) => (
+      {conversationss &&
+        conversationss.map((conversation) => (
           <Link
             to={`/account/sale-notation/${conversation._id}`}
             className="flex items-center gap-2"

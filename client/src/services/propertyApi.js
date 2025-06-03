@@ -191,17 +191,59 @@ export const deleteProperty = async (propertyId) => {
 };
 
 //Like Property
-export const likeProperty = async () => {
+export const likeProperty = async (propertyId) => {
   try {
+    const res = await apiClient.post(`/property/like/${propertyId}`);
+
+    if (res.status === 200) {
+      console.log("LIKE PROPERTY COUNT: ", res.data);
+      return res.data;
+    }
   } catch (error) {
     console.error("Something went wrong while liking the property");
   }
 };
 
 //Shortlist Property
-export const shortlistProperty = async () => {
+export const shortlistProperty = async (propertyId) => {
   try {
+    const res = await apiClient.post(`/property/shortlist/${propertyId}`);
+
+    if (res.status === 200) {
+      return res.data;
+    }
   } catch (error) {
     console.error("Something went wrong while shortlisting the property");
+  }
+};
+
+//Is Property Liked
+export const isPropertyLiked = async (propertyId) => {
+  try {
+    console.log("Property IDDDd: ", propertyId);
+    const res = await apiClient.post(`/property/isLiked/${propertyId}`);
+    if (res.status === 200) {
+      return res.data.data.status;
+    }
+
+    return res;
+  } catch (error) {
+    console.error("Something went wrong while fetch is property liked");
+  }
+};
+
+//Is Property Liked
+export const isPropertyShortlisted = async (propertyId) => {
+  try {
+    const res = await apiClient.post(`/property/isShortlisted/${propertyId}`);
+    if (res.status === 200) {
+      return res.data.data.status;
+    }
+
+    return res;
+  } catch (error) {
+    console.error(
+      "Something went wrong while fetching is property shortlisted"
+    );
   }
 };

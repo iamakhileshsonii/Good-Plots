@@ -7,30 +7,30 @@ import { useParams } from "react-router-dom";
 const SaleNotation = () => {
   const [saleNotationConversation, setSaleNotationConversation] = useState();
 
-  const { conversationId } = useParams();
-  console.log("CONVERSATION ID: ", conversationId);
-  const {
-    conversations,
-    selectedConversation,
-    messages,
-    setConversations,
-    setSelectedConversation,
-    setMessages,
-  } = useSaleNotation();
+  // const { conversationId } = useParams();
+  // console.log("CONVERSATION ID: ", conversationId);
+  // const {
+  //   conversations,
+  //   selectedConversation,
+  //   messages,
+  //   setConversations,
+  //   setSelectedConversation,
+  //   setMessages,
+  // } = useSaleNotation();
 
-  useEffect(() => {
-    const fetchSaleNotations = async () => {
-      const res = await getSaleNotationConversations();
-      if (res) {
-        setConversations(res);
-        setSaleNotationConversation(res);
-      } else {
-        setSaleNotationConversation([]);
-      }
-    };
+  // useEffect(() => {
+  //   const fetchSaleNotations = async () => {
+  //     const res = await getSaleNotationConversations();
+  //     if (res) {
+  //       setConversations(res);
+  //       setSaleNotationConversation(res);
+  //     } else {
+  //       setSaleNotationConversation([]);
+  //     }
+  //   };
 
-    fetchSaleNotations();
-  }, []);
+  //   fetchSaleNotations();
+  // }, []);
   return (
     <div className="min-h-screen overflow-y-scroll">
       <SaleNotationContainer />

@@ -3,6 +3,7 @@ import MenuBar from "@/components/menu-bar";
 import OffCanvas from "@/components/menu-bar";
 import { Button } from "@/components/ui/button";
 import React from "react";
+import { Link } from "react-router-dom";
 
 const Home = () => {
   const options = [
@@ -50,20 +51,28 @@ const Home = () => {
       <div className="grid gap-4 grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 mt-20 px-10 sm:px-40">
         {options.map((option, index) => (
           <div
-            className="bg-white border border-gray-200 rounded-lg shadow-md p-6"
+            className="bg-white border border-gray-200 rounded-lg shadow-md p-6 flex flex-col justify-between h-52"
             key={index}
           >
-            <h2 className="text-xl font-semibold text-gray-800">
-              {option.title}
-            </h2>
-            <p className="text-gray-600 mt-2">{option.categories}</p>
-            <div className="flex justify-between mt-4">
-              <Button variant="default" className="w-full mr-2">
-                Buy
-              </Button>
-              <Button variant="outline" className="w-full ml-2">
-                Sell
-              </Button>
+            {/* Content section */}
+            <div>
+              <h2 className="text-xl font-semibold text-gray-800">
+                {option.title}
+              </h2>
+              <p className="text-gray-600 mt-2">{option.categories}</p>
+            </div>
+            {/* Buttons aligned to the bottom */}
+            <div className="flex justify-between items-center mt-4">
+              <Link to="/explore-properties" className="flex-1 mr-2">
+                <Button variant="default" className="w-full">
+                  Buy
+                </Button>
+              </Link>
+              <Link to="/explore-properties" className="flex-1 ml-2">
+                <Button variant="outline" className="w-full">
+                  Sell
+                </Button>
+              </Link>
             </div>
           </div>
         ))}

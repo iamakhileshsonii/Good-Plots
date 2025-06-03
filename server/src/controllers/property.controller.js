@@ -443,9 +443,40 @@ const deleteProperty = asyncHandler(async (req, res) => {
 //Shortlisted Properties
 const getShortlistedProperties = asyncHandler(async (req, res) => {
   try {
-    const properties = await Shortlist.find({
-      shortlistedBy: new mongoose.Types.ObjectId(req.user._id),
-    });
+    const properties = await Shortlist.aggregate([
+      {
+        $match: {
+          shortlistedBy: new mongoose.Types.ObjectId(req.user._id),
+        },
+      },
+      {
+        $lookup: {
+          from: "initialforms",
+          localField: "propertyId",
+          foreignField: "_id",
+          as: "property",
+          pipeline: [
+            {
+              $lookup: {
+                from: "propertykycs",
+                localField: "_id",
+                foreignField: "propertyId",
+                as: "propertyDetails",
+              },
+            },
+          ],
+        },
+      },
+      {
+        $unwind: "$property",
+      },
+      {
+        $project: {
+          shortlistedBy: 1,
+          property: 1,
+        },
+      },
+    ]);
 
     if (!properties) {
       return res.status(404).json(404, {}, "No shortlisted property found");
@@ -453,7 +484,13 @@ const getShortlistedProperties = asyncHandler(async (req, res) => {
 
     return res
       .status(200)
-      .json(200, properties, "All Shortlisted properties fetched successfully");
+      .json(
+        new ApiResponse(
+          200,
+          properties,
+          "All Shortlisted properties fetched successfully"
+        )
+      );
   } catch (error) {
     console.error("Unable to fetch shortlisted properties", error);
   }
@@ -462,9 +499,40 @@ const getShortlistedProperties = asyncHandler(async (req, res) => {
 //Liked Properties
 const getLikedProperties = asyncHandler(async (req, res) => {
   try {
-    const properties = await Like.find({
-      likedBy: new mongoose.Types.ObjectId(req.user._id),
-    });
+    const properties = await Like.aggregate([
+      {
+        $match: {
+          likedBy: new mongoose.Types.ObjectId(req.user._id),
+        },
+      },
+      {
+        $lookup: {
+          from: "initialforms",
+          localField: "propertyId",
+          foreignField: "_id",
+          as: "property",
+          pipeline: [
+            {
+              $lookup: {
+                from: "propertykycs",
+                localField: "_id",
+                foreignField: "propertyId",
+                as: "propertyDetails",
+              },
+            },
+          ],
+        },
+      },
+      {
+        $unwind: "$property",
+      },
+      {
+        $project: {
+          likedBy: 1,
+          property: 1,
+        },
+      },
+    ]);
 
     if (!properties) {
       return res
@@ -537,7 +605,13 @@ const shortlistProperty = asyncHandler(async (req, res) => {
 
     return res
       .status(200)
-      .json(new ApiResponse(200, {}, "Shortlisted property rejected"));
+      .json(
+        new ApiResponse(
+          200,
+          rejectShortlistedProperty,
+          "Shortlisted property rejected"
+        )
+      );
   }
 
   const shortlist = await Shortlist.create({
@@ -547,6 +621,58 @@ const shortlistProperty = asyncHandler(async (req, res) => {
 
   if (!shortlist) {
     throw new ApiError(400, "Failed to shortlist property");
+  }
+
+  return res
+    .status(200)
+    .json(200, shortlist, "Property shortlisted successfully");
+});
+
+//Is Property Liked
+export const isPropertyLiked = asyncHandler(async (req, res) => {
+  const { propertyId } = req.params;
+
+  if (!propertyId) {
+    throw new ApiError(400, "Property Id is required");
+  }
+
+  const isLiked = await Like.findOne({
+    likedBy: new mongoose.Types.ObjectId(req.user._id),
+    propertyId: propertyId,
+  });
+
+  if (isLiked) {
+    return res
+      .status(200)
+      .json(new ApiResponse(200, { status: true }, "Property Liked"));
+  } else {
+    return res
+      .status(200)
+      .json(new ApiResponse(200, { status: false }, "Property Not Liked"));
+  }
+});
+
+//Is Property Shortlisted
+export const isPropertyShortlisted = asyncHandler(async (req, res) => {
+  const { propertyId } = req.params;
+
+  if (!propertyId) {
+    throw new ApiError(400, "Property Id is required");
+  }
+
+  const isLiked = await Shortlist.findOne({
+    shortlistedBy: new mongoose.Types.ObjectId(req.user._id),
+    propertyId: propertyId,
+  });
+
+  if (isLiked) {
+    return res
+      .status(200)
+      .json(new ApiResponse(200, { status: true }, "Property Shortlisted"));
+  } else {
+    return res
+      .status(200)
+      .json(new ApiResponse(200, { status: false }, "Property rejected"));
   }
 });
 

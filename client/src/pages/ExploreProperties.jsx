@@ -1,8 +1,5 @@
 import PropertyCard from "@/components/property-card";
-import {
-  exploreProperties,
-
-} from "@/services/propertyApi";
+import { exploreProperties } from "@/services/propertyApi";
 import React, { useEffect, useState } from "react";
 import {
   Dialog,
@@ -62,7 +59,7 @@ const ExploreProperties = () => {
             key={property._id} // Using the property id for unique key
             id={property._id}
             owner={property.owner}
-            featuredImage={property?.details[0]?.photos.siteView}
+            featuredImage={property?.details[0]?.photos?.siteView}
             title={property.title}
             price={property.expectedPrice}
             description={property.description.slice(0, 100) + "..."}

@@ -3,7 +3,7 @@ import { likedProperties } from "@/services/propertyApi";
 import React, { useEffect, useState } from "react";
 
 const LikedProperties = () => {
-  const [properties, setProperties] = useState(null);
+  const [properties, setProperties] = useState([]);
 
   //Fetch liked properties
   const fetchLikedProperties = async () => {
@@ -26,16 +26,21 @@ const LikedProperties = () => {
 
   return (
     <div className="p-4 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
-      {/* STATIC CARD */}
-      <LikedPropertyCard
-        id={1}
-        featuredImage={null}
-        title={"asdasd"}
-        saleType={"asdasd"}
-        price={"1231"}
-        propertySubtype={"1asdasd"}
-        description={"loremsda asd asdasdasdasd"}
-      />
+      {properties.length > 0
+        ? properties.map((property, index) => (
+            <LikedPropertyCard
+              id={property?.property?._id}
+              featuredImage={
+                property?.property?.propertyDetails[0]?.photos?.siteView
+              }
+              title={property?.property?.title}
+              saleType={property?.property?.saleType}
+              price={property?.property?.expectedPrice}
+              propertySubtype={property?.property?.propertySubtype}
+              description={property?.property?.description}
+            />
+          ))
+        : "No Properties Found"}
     </div>
   );
 };

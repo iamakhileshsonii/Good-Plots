@@ -14,6 +14,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { scheduleAppointment } from "@/services/appointmentApi";
 import { useToast } from "@/hooks/use-toast";
+import AppointmentSlots from "./appointment-slots";
 
 export default function ScheduleAppointment({ onClose, propertyId, owner }) {
   const { toast } = useToast();
@@ -43,6 +44,7 @@ export default function ScheduleAppointment({ onClose, propertyId, owner }) {
   });
 
   const onSubmit = async (data) => {
+    console.log("Appointment: ", appointmentForm.getValues());
     try {
       const res = await scheduleAppointment(data);
 
@@ -84,6 +86,9 @@ export default function ScheduleAppointment({ onClose, propertyId, owner }) {
     }
   };
 
+  // Get current date in 'YYYY-MM-DD' format
+  const currentDate = new Date().toISOString().split("T")[0];
+
   return (
     <Card className="w-full">
       <CardHeader />
@@ -102,7 +107,12 @@ export default function ScheduleAppointment({ onClose, propertyId, owner }) {
                   <FormItem className="w-full sm:w-1/2">
                     <FormLabel>Date</FormLabel>
                     <FormControl>
-                      <Input type="date" {...field} className="w-full" />
+                      <Input
+                        type="date"
+                        {...field}
+                        className="w-full"
+                        min={currentDate} // Restrict selecting previous date
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -116,7 +126,7 @@ export default function ScheduleAppointment({ onClose, propertyId, owner }) {
                   <FormItem className="w-full sm:w-1/2">
                     <FormLabel>Time</FormLabel>
                     <FormControl>
-                      <Input type="time" {...field} className="w-full" />
+                      <AppointmentSlots {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>

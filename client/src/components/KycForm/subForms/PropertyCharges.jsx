@@ -86,8 +86,11 @@ const PropertyCharges = () => {
             )}
           />
         ))}
-        <Button onClick={prevStep}>Previous</Button>
-        <Button type="submit">Submit</Button>
+
+        <div className="mt-6 flex justify-between ">
+          <Button onClick={prevStep}>Previous</Button>
+          <Button type="submit">Next</Button>
+        </div>
       </form>
     </Form>
   );

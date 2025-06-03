@@ -22,6 +22,12 @@ import {
   assignedPincodesForBrokers,
   assignedPincodesForLawyers,
   checkAuth,
+  allbrokers,
+  alladmins,
+  alluserclient,
+  allbuyerseller,
+  alllawyers,
+  allUsers,
 } from "../controllers/user.controller.js";
 import { verifyJWT } from "../middlewares/auth.middleware.js";
 
@@ -48,4 +54,12 @@ router.route("/assign-pincode-to-broker/:userId").post(assignPincodeToBroker);
 router.route("/assign-pincode-to-lawyer/:userId").post(assignPincodeToLawyer);
 router.route("/assigned-lawyers-pins").get(assignedPincodesForLawyers);
 router.route("/assigned-brokers-pins").get(assignedPincodesForBrokers);
+
+// Get users by role
+router.route("/all-users").get(allUsers);
+router.route("/all-brokers").get(allbrokers);
+router.route("/all-lawyer").get(alllawyers);
+router.route("/all-buyer-seller").get(allbuyerseller);
+router.route("/all-user-client").get(alluserclient);
+router.route("/all-admin").get(alladmins);
 export default router;

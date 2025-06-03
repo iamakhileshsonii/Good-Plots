@@ -100,28 +100,32 @@ const SocietyAndParking = () => {
         onSubmit={societyAndParkingForm.handleSubmit(onSubmit)}
         className="space-y-8"
       >
-        {fields.map((formField, index) => (
-          <FormField
-            key={index}
-            control={societyAndParkingForm.control}
-            name={formField.name}
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>{formField.label}</FormLabel>
-                <FormControl>
-                  <Checkbox
-                    checked={field.value}
-                    onCheckedChange={field.onChange}
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-        ))}
-        <div className="mt-6">
+        <div className="flex justify-start gap-2 flex-wrap">
+          {fields.map((formField, index) => (
+            <FormField
+              key={index}
+              control={societyAndParkingForm.control}
+              name={formField.name}
+              render={({ field }) => (
+                <FormItem className="flex gap-1 items-center">
+                  <FormControl>
+                    <Checkbox
+                      checked={field.value}
+                      onCheckedChange={field.onChange}
+                    />
+                  </FormControl>
+                  <FormLabel>{formField.label}</FormLabel>
+
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          ))}
+        </div>
+
+        <div className="mt-6 flex justify-between ">
           <Button onClick={prevStep}>Previous</Button>
-          <Button type="submit">Submit</Button>
+          <Button type="submit">Next</Button>
         </div>
       </form>
     </Form>

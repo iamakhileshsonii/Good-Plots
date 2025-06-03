@@ -31,7 +31,7 @@ import { useToast } from "@/hooks/use-toast";
 const formSchema = z.object({
   title: z.string().min(2).max(50),
   propertySubtype: z.string().min(1, "Please select a property subtype"),
-  description: z.string().min(2).max(100),
+  description: z.string().min(2).max(5000),
   address: z.object({
     addressLine: z.string().min(5).max(80),
     city: z.string().min(2).max(50),

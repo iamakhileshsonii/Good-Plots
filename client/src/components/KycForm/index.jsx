@@ -43,11 +43,13 @@ const index = () => {
   }
 
   return (
-    <div>
+    <div className="sm:p-10 ">
       <h1 className="font-semibold">KYC FOR </h1>
 
-      <Card>
-        <div className="border">{stepCount(currentStep)}</div>
+      <Card className="sm:px-52 border-none sm:m-6 m-2 p-4shadow-none">
+        <div className="border sm:px-96 sm:py-8 p-4">
+          {stepCount(currentStep)}
+        </div>
       </Card>
     </div>
   );

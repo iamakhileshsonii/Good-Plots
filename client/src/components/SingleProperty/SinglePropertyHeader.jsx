@@ -2,23 +2,45 @@ import React from "react";
 import DefaultProperty from "@/assets/Property.jpg";
 
 const SinglePropertyHeader = ({ propertyImage, propertyTitle }) => {
+  console.log(propertyImage);
   return (
-    <div className="relative w-full h-[60vh] ">
-      {/* Property Image */}
-      <img
-        src={propertyImage || DefaultProperty}
-        alt="Property"
-        className="absolute inset-0 w-full h-full object-cover"
-      />
+    <div className="flex justify-center mt-14">
+      {/* Rounded Container */}
+      <div className="w-[78%] h-[400px] flex gap-1 rounded-2xl overflow-hidden">
+        {/* Left Side: Large Image */}
+        <div className="w-2/3 h-full">
+          <img
+            src={propertyImage?.siteView || DefaultProperty}
+            alt="Property"
+            className="w-full h-full object-cover"
+          />
+        </div>
 
-      {/* Overlay */}
-      <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-black opacity-60 "></div>
-
-      {/* Title Section */}
-      <div className="relative z-10 flex items-center justify-center h-full">
-        <h1 className="text-white text-4xl md:text-6xl font-bold text-center">
-          {propertyTitle}
-        </h1>
+        {/* Right Side: 2x2 Grid of Small Images */}
+        <div className="w-1/3 grid grid-cols-2 grid-rows-2 gap-1">
+          {propertyImage?.additionalImages?.length >= 4
+            ? propertyImage.additionalImages
+                .slice(0, 4)
+                .map((img, index) => (
+                  <img
+                    key={index}
+                    src={img}
+                    alt={`Property ${index + 1}`}
+                    className="w-full h-full object-cover"
+                  />
+                ))
+            : // Fallback in case there are not enough images
+              Array(4)
+                .fill(DefaultProperty)
+                .map((img, index) => (
+                  <img
+                    key={index}
+                    src={img}
+                    alt={`Placeholder ${index + 1}`}
+                    className="w-full h-full object-cover"
+                  />
+                ))}
+        </div>
       </div>
     </div>
   );

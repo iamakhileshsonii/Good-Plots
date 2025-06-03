@@ -17,7 +17,7 @@ const PropertyPage = () => {
       setLoading(true); // Show loader
       try {
         const res = await getProperty(propertyId);
-
+        console.log("PROXIMITY: ", res[0]);
         if (res?.length > 0) {
           setProperty(res[0]); // Assuming res[0] is valid
         } else {
@@ -45,7 +45,7 @@ const PropertyPage = () => {
         <div className="min-h-screen bg-gray-50 dark:bg-black">
           {/* Header */}
           <SinglePropertyHeader
-            propertyImage={property?.kycDetails[0]?.photos?.siteView}
+            propertyImage={property?.kycDetails[0]?.photos}
             propertyTitle={property?.title}
           />
 
@@ -55,6 +55,11 @@ const PropertyPage = () => {
             <SinglePropertyMainContent
               title={property?.title}
               description={property?.description}
+              subtype={property?.propertySubtype}
+              price={property?.expectedPrice}
+              totalArea={property?.totalArea}
+              amenities={property?.kycDetails[0]?.amenities}
+              proximity={property?.kycDetails[0]?.proximity}
             />
 
             {/* Sidebar */}
